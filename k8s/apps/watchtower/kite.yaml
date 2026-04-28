@@ -1,0 +1,54 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: kite
+spec:
+  interval: 24h
+  url: https://kite-org.github.io/kite/
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kite
+spec:
+  interval: 10m
+  timeout: 5m
+  chart:
+    spec:
+      chart: kite
+      version: 0.10.0
+      sourceRef:
+        kind: HelmRepository
+        name: kite
+      interval: 1h
+  values:
+    db:
+      sqlite:
+        persistence:
+          pvc:
+            enabled: true
+    rbac:
+      rules:
+        - apiGroups: ["*"]
+          resources: ["*"]
+          verbs: ["get","list","watch"]
+        - nonResourceURLs: ["*"]
+          verbs: ["get","list","watch"]
+    ingress:
+      enabled: true
+      className: traefik
+      hosts:
+        - host: kite.cocointhe.cloud
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - hosts:
+          - kite.cocointhe.cloud
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi

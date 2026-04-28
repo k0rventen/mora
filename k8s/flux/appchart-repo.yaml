@@ -1,0 +1,10 @@
+# this appchart will be used across the whole cluster 
+# so we define it here rather than above every HR calling it
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: appchart
+  namespace: flux-system
+spec:
+  interval: 24h
+  url: https://k0rventen.github.io/appchart/

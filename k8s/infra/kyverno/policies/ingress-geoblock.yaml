@@ -1,0 +1,27 @@
+# Policy that enforces the geoblock middleware by default on public ingress
+# except if the label cocointhe.cloud/geoblock-disabled is present
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-geoblock-to-traefik-tunnel-ingress
+spec:
+  rules:
+    - name: add-annotation-to-all
+      match:
+        resources:
+          kinds:
+            - Ingress
+          selector:
+            matchExpressions:
+              - key: cocointhe.cloud/geoblock-disabled
+                operator: DoesNotExist
+      preconditions:
+        all:
+          - key: "{{ request.object.spec.ingressClassName }}"
+            operator: Equals
+            value: "traefik-tunnel"
+      mutate:
+        patchStrategicMerge:
+          metadata:
+            annotations:
+              traefik.ingress.kubernetes.io/router.middlewares: ingress-geoblock@kubernetescrd

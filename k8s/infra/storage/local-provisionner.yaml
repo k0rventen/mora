@@ -1,0 +1,42 @@
+#$ git clone https://github.com/rancher/local-path-provisioner.git
+#$ cd local-path-provisioner
+#$ helm install local-path-storage --create-namespace --namespace local-path-storage ./deploy/chart/local-path-provisioner/
+
+
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: containeroo
+spec:
+  interval: 24h
+  url: https://charts.containeroo.ch
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: local-path-provisioner
+spec:
+  interval: 10m
+  timeout: 5m
+  install:
+    crds: Create
+  upgrade:
+    crds: CreateReplace
+  chart:
+    spec:
+      chart: local-path-provisioner
+      version: "0.0.36"
+      sourceRef:
+        kind: HelmRepository
+        name: containeroo
+      interval: 1h
+  values:
+    nodePathMap: []
+    sharedFileSystemPath: "/data"
+    storageClass:
+      name: nfs-csi
+      reclaimPolicy: Retain
+      defaultClass: true
+      pathPattern: "{{ .PVC.Namespace }}-{{ .PVC.Name }}"
+      annotations:
+        allowUnsafePathPattern: "true"

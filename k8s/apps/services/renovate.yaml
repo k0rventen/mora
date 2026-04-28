@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: renovate
+spec:
+  schedule: "0 20 * * *"
+  timeZone: "Europe/Paris"
+  # suspend: true
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          volumes:
+          - name: renovate-cache
+            persistentVolumeClaim:
+              claimName: renovate-cache
+          containers:
+            - name: renovate
+              image: renovate/renovate:43.113.0@sha256:9dd3f426078a6ce9461c87264e4bcd1853698dc5ebb594fe5fab1f0afd25ef9b
+              args:
+                - k0rventen/lampone
+              envFrom:
+                - secretRef:
+                    name: renovate-env
+              volumeMounts:
+              - mountPath: "/tmp/renovate"
+                name: renovate-cache
+          restartPolicy: Never
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: renovate-cache
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi

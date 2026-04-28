@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: explo-config
+stringData:
+  .env: ENC[AES256_GCM,data:SolFeOKxC07HckF9B2qEKmaK1EXl7VkNBaAGws6QnghrpoqFC3NFXxtvao8JO/XvQSrDeQ9mLl/wSpUknGgchz1AlJweQ/6AJjedBRLYsqI9fagl9kRFnm/INpDyKhcaBLGItbXA+VkKSgHs/aQifkiyy2WFoz2LKy9QfCE8tn4MQgCNvwrWlk1kNNCkOmWLejSfBF0YcgRlSJX2Nb859bpyewFQ35NDw/y3dGmKsZF3DiEblOcBvha2Q0l6BYRKaFA51r+6ImL1pHxns7ZcZ0GGQ2gfKZ8UcPru1s0yWTyae39FUWX3ZUqoYLEwpRTSS2v/Ju3ukczpefzQr0HLVY5EJtRoLxNd1JSjWTpft3J+KkzobG8goWpZtPSwlumz5a/kw8utDyHMUwcPp2RelJNQbbrW2bjf4ftx8DwCExEszrt96016Ir/b5mk41kBcsaMaJaE2ZTWWr3Xni8qZtP8LDWSyja9/SOY5Ei+HMOaEanh/HMo2sKXNmv55qblQNU9XCllEdyvLnnPoHG/hSaGyTkjgXAwlrKpUixj5Nz8Xyiju8iVB94wOFQuwHBj23XDVoFQA3/lc97gH1MTp18uoQFvM3Q0ZF1bgHZx5mcMPmUTJtv6MtojnNutncwRjVQ7JdGmtoFiWnbIbn+Xd65/gZGWikV7ZNnLvs7ntHd8W0M8o/e4IyqzO+1DL2+WYW9b94OMA5UWc94jy+eh42C+Zpr0DXISf1HmkrHOd9vWoduEJQkE9No9uQr0zLc44xx1PASf5somWr2gMpMwHtf4F7+wnG78cwaJTfrtP1yCx5n893nQzn72g0qXqMlH4SkCVzbGejvq3Gzun6v5BqbMuvzainPyFuazG3Cp0R+m9oVxsKykbROnoFjxSuQY7JIvxkA==,iv:PytrO7fl27o93DoY6yPQazxG5qIzFG5j/1YmC1W6yck=,tag:nTKzAQr4Mh6w22Nlog/FIw==,type:str]
+sops:
+  age:
+    - recipient: age16xc3m2q69s2le4hah3pcne50qn6mljhgc9mxekskwf0mp8fc0vaq5q5dz2
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBGQ09TZ09PU3FnNllleXow
+        cjZKYzhIRnF2eDhVMEwwNncva0sya280LzNZCjcvMTFUcDY1WW02Yy9tTG5NWHdZ
+        WVRUVWwxSGQxTjQ1SXNNS2kyMjByUVEKLS0tIG9MOWZHV0JIQ0VZUlBGTUwxUllZ
+        WFVDZEg2UjB6R1NNZ28yLyt6RlQrUEEKfy1PVfr2W8hLtklOCvGJsqrPIEky5PYf
+        fLnDjG1POmjnK66MxjkLWFOURwji2SrPjFKY8uM4WSqfhq3ayj38lw==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2026-02-08T11:55:23Z"
+  mac: ENC[AES256_GCM,data:vaii/30XFlqPyG1gD1sP/3xfO5gAxfVEAET8rj2IwY6lkRNVPrkTB2HFv1Tl5njM4Ku2t8e6mllhwLkLDqRAP9DPmHqzPO1JiT8P9AbLQIc0fbqXaWVIApH/jP7QjPnw7dqq81dPBKy/NczdApteZF7YyLfYhpMiaBeZ+SNZegw=,iv:BiVfH9yCYeXiTRNCdk72PrJenpTR2/IyOk/y48GX6VU=,tag:yCsKgMZSoifVzajwSoiNPg==,type:str]
+  encrypted_regex: (token|email|^data$|^stringData$|webhook$|creds$|secrets$)
+  version: 3.11.0

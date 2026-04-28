@@ -1,0 +1,40 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: nota
+spec:
+  interval: 24h
+  chart:
+    spec:
+      chart: appchart
+      version: "1.8.0"
+      sourceRef:
+        kind: HelmRepository
+        name: appchart
+        namespace: flux-system
+      interval: 1h
+  values:
+    apps:
+      - name: nota
+        image: gitea.cocointhe.cloud/coco/nota:0.3.0@sha256:83104667552ad654d15c86167471641937bdfd3ea74d88bb84c33e4fdc525047
+        service: 8000
+        anubis: true
+        ingress:
+          public: true
+          domain: notes.cocointhe.cloud
+        env:
+        - name: BLOG_TITLE
+          value: "> coco@nota:/"
+        containerSpec:
+          envFrom:
+            - secretRef:
+                name: nota-config
+        volumeMounts:
+          - name: nota-data
+            mountPath: /app/data
+        volumes:
+          - name: nota-data
+            persistentVolumeClaim:
+              claimName: nota-data
+        pvc:
+          - nota-data

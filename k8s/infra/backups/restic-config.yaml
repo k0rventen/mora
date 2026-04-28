@@ -1,0 +1,46 @@
+apiVersion: v1
+stringData:
+  RESTIC_PASSWORD: ENC[AES256_GCM,data:+ZtL7InClRynoS8=,iv:kQPTo/Y55JU0sanzKf9ICk+oM9eskjYIAkgLYIvZBCw=,tag:j6b2IQvH0YCSXVezkMlcaQ==,type:str]
+  RESTIC_REMOTE_REPO: ENC[AES256_GCM,data:q2SfrDqkfnGOq6UwdStytFzLo2BlaWU/WWUG3H+xuoP5o/qjln3B9PJnl6xuKcQIYomxog9KC/up+9JmKi4X2qzZ,iv:7eT+05oFKKk3IX1Z0OHt2nKRLIM9ZJZ6fVtPtBB/lLI=,tag:3cHVrjh9s3nj93uOuXJl5w==,type:str]
+  RESTIC_NFS_PATH: ENC[AES256_GCM,data:ROp90HYAecHcYQKH,iv:/9oJu0oqj3+y/jB7qDkuUHiWJlBSvBBlnWZ/eYt1CEk=,tag:VygtVPsTFPfk0ZWaD+dFYQ==,type:str]
+  DISCORD_WEBHOOK: ENC[AES256_GCM,data:s/keIQ2WxKw2HW8ftdY3me6/bHTadiN9c+1nPYb89v8LdE80QYtCFNodjXRAHG5UTMZXhB7uS+63HaJ5H3o8tUDX4F8wIyjHWga0TcD6vCl2+pE83BuvseEDw1VOXKPKFwgs1La+OQS3wdjXs4iGtk7jPrfivu5o0w==,iv:gcjorIuBh2p5NXtVthfTiue3+kmF6x0EUzsuoANhzpQ=,tag:SEh0zJ7GjDN0gWZH9WsoQw==,type:str]
+kind: Secret
+metadata:
+  name: restic-config
+sops:
+  age:
+    - recipient: age16xc3m2q69s2le4hah3pcne50qn6mljhgc9mxekskwf0mp8fc0vaq5q5dz2
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBaV3dQdC9rcVc0NVhMRFk1
+        Z0xzUklRU3g4K1l1Tm1BQjM1Z1JnOTF1VGxzCmNuRVZ2aExMbjFSb3lqOCtGa3FH
+        Z0xrY2tMR3RxQ1phaE0xVmROL3duK1UKLS0tIGpla2JTTVVlNUJMaEVpeVRMNWRL
+        YjlhRTM2M0VWeFZyakd5dFB2aDJrWDQKTIZ6jMr1quBxYtOHtfxEBn7IYO1tifSE
+        abpody3bnhWBbUMkrU+R2mreLI/LogopnVGvcBrhnjn+9LyTy0GwHg==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-09-16T19:03:40Z"
+  mac: ENC[AES256_GCM,data:YfnmQxKWviIIqmlJB8Z1VISXu3ri7vcDVcCDHg6M1U1+dwcvNeLLz4d8ym4WSH2rUofxFi1KNyP7Dqp1SnlEfs0tKi8IfTD1Gqr+v3ZwclXPxyMwhHYKHXp8bqGOofnhrv3KHJ7hE7a5WKADRsDvZscUSL9aeOBf8n2Mlvic5AA=,iv:v77iEGuyz99HMdt+mRsR8XDoBgCxILVMmTmk8m7WjI0=,tag:ZzyKTBV/6oPe4ZpFfgI/dQ==,type:str]
+  encrypted_regex: (token|email|^data$|^stringData$|webhook$|creds$)
+  version: 3.10.2
+---
+apiVersion: v1
+data:
+  sshkey: ENC[AES256_GCM,data:WptMXF3GhkaUhW7a53nt3xAd0LeZAaKGWrFQ1b0CpEiQMYMRLAlc8nzeoBOFsHKynl2VfO4zAM5+KuFbs4lcvXd1Y0O+ssCtdzCIgMQ3gL+/lvC3Mx0YVIJUfamOCIL0N7/rEu/iE+btvU+edWsfEVuq0A7KQ7AM6HufupDdew0g2CPYsMcfni4TTyYgf69IMZ1WOfgH0xGB5AS6my1t/XUtU4mwDfxAR/LOHjK0hv00dEdNyO478i616e7OP+q0Ixy9ScjuW6e92l2+GDOQh26xwcaY24q7PnU+rquyscqt7s+k99USGpoSffIXtsyVWKGBBdu1rYXI8wj2ldBxNizpZnGRo7acJOUaBYBaeuw0IDm6LipG14zsghY8cbNL7Ir2PC7NQkDnokbCHu7flHdrSSeNqhGssHx1nh5t+dzdt2Hv49yvoA0oASNSZHHO1sDsgTBBR+7jaLEO5SCPJwjzr7VASxmmJGrpk3vHua7Qxp8OFOm/t+WNvHyHjg/Czw/eqW7tunhGZctN5jF0s8cAHjbHr1PkDXWpZ5qQDGoYutW21xe1HWnzrqAt95oV52X57Pr8aM6IDt9Da/cm8uJRHGxBF+o1/uRRB3+Au0mY5G5B9zwbrfLe/0Yw3NQnvpVdw580XvU7KDNHwi9zrxTpCBfxPvZvlKuKcRTXhhVlbzlmmE7Zc86O9E9nJpgR59ufyldMq7HT4hcVRFkf7Ak472E=,iv:1Kfok31O/FA2rNBE0oNlvYqRQQgtC4gtYqwkPnE6KbE=,tag:LF5s13wKH8tGdMcw+uu1iQ==,type:str]
+kind: Secret
+metadata:
+  name: sshkey
+sops:
+  age:
+    - recipient: age16xc3m2q69s2le4hah3pcne50qn6mljhgc9mxekskwf0mp8fc0vaq5q5dz2
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBaV3dQdC9rcVc0NVhMRFk1
+        Z0xzUklRU3g4K1l1Tm1BQjM1Z1JnOTF1VGxzCmNuRVZ2aExMbjFSb3lqOCtGa3FH
+        Z0xrY2tMR3RxQ1phaE0xVmROL3duK1UKLS0tIGpla2JTTVVlNUJMaEVpeVRMNWRL
+        YjlhRTM2M0VWeFZyakd5dFB2aDJrWDQKTIZ6jMr1quBxYtOHtfxEBn7IYO1tifSE
+        abpody3bnhWBbUMkrU+R2mreLI/LogopnVGvcBrhnjn+9LyTy0GwHg==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-09-16T19:03:40Z"
+  mac: ENC[AES256_GCM,data:YfnmQxKWviIIqmlJB8Z1VISXu3ri7vcDVcCDHg6M1U1+dwcvNeLLz4d8ym4WSH2rUofxFi1KNyP7Dqp1SnlEfs0tKi8IfTD1Gqr+v3ZwclXPxyMwhHYKHXp8bqGOofnhrv3KHJ7hE7a5WKADRsDvZscUSL9aeOBf8n2Mlvic5AA=,iv:v77iEGuyz99HMdt+mRsR8XDoBgCxILVMmTmk8m7WjI0=,tag:ZzyKTBV/6oPe4ZpFfgI/dQ==,type:str]
+  encrypted_regex: (token|email|^data$|^stringData$|webhook$|creds$)
+  version: 3.10.2

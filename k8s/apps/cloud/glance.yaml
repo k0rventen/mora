@@ -1,0 +1,120 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: glance
+spec:
+  interval: 24h
+  chart:
+    spec:
+      chart: appchart
+      version: "1.8.0"
+      sourceRef:
+        kind: HelmRepository
+        name: appchart
+        namespace: flux-system
+      interval: 1h
+  values:
+    apps:
+      - name: glance
+        image: glanceapp/glance:v0.8.4@sha256:6df86a7e8868d1eda21f35205134b1962c422957e42a0c44d4717c8e8f741b1a
+        volumeMounts:
+          - name: glance-config
+            mountPath: /app/config/glance.yml
+            subPath: glance.yml
+          - name: glance-config
+            mountPath: /app/assets/custom.css
+            subPath: custom.css
+        volumes:
+          - name: glance-config
+            configMap:
+              name: glance-config
+        service: 8080
+        ingress:
+          public: true
+          domain: news.cocointhe.cloud
+
+    configmaps:
+      glance-config:
+        custom.css: |-
+          .header-container, .expand-toggle-button, .mobile-navigation{
+              display: none;
+          }
+        glance.yml: |-
+          server:
+            assets-path: /app/assets
+          theme:
+            background-color: 229 19 23
+            contrast-multiplier: 1.6
+            primary-color: 222 74 74
+            positive-color: 96 44 68
+            negative-color: 359 68 71
+            custom-css-file: /assets/custom.css
+          branding:
+            hide-footer: true
+          pages:
+          - name: Home
+            columns:
+              - size: full
+                widgets:
+                  - type: group
+                    widgets:
+                    - type: hacker-news
+                      cache: 1h
+                      collapse-after: 8
+                    - type: lobsters
+                      sort-by: hot
+                      collapse-after: 8
+                    - type: reddit
+                      cache: 1h
+                      subreddit: selfhosted
+                      collapse-after: 8
+                    - type: rss
+                      cache: 1h
+                      title: Ars Technica
+                      collapse-after: 8
+                      feeds:
+                      - url: https://feeds.arstechnica.com/arstechnica/index
+                    - type: rss
+                      cache: 1h
+                      title: Phoronix
+                      collapse-after: 8
+                      feeds:
+                      - url: https://www.phoronix.com/phoronix-rss.php
+                    - type: rss
+                      cache: 1h
+                      title: SE Unix & Linux
+                      collapse-after: 8
+                      feeds:
+                      - url: https://unix.stackexchange.com/feeds/week
+                  - type: videos
+                    cache: 1h
+                    style: grid-cards
+                    collapse-after-rows: 2
+                    channels:
+                      - UCXuqSBlHAE6Xw-yeJA0Tunw # LTT
+                      - UCdBK94H6oZT2Q7l0-b0xmMg # SC
+                      - UCeeFfhMcJa1kjtfZAGskOCA # TL
+                      - UCIgNWXsJcFwvFptmUic6wSw # alpard
+                      - UCz7mxur_emoA8fl9kvizgtA # Jzred
+                      - UCR-DXc1voovS8nhAvccRZhg # JG
+---
+
+# glance -> web for news fetching
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-glance-web
+spec:
+  podSelector:
+    matchLabels:
+      app: glance
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+        except:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16

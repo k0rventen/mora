@@ -1,0 +1,9 @@
+#!/bin/sh
+gitleaks git --staged --pre-commit --no-banner --verbose -l warn
+
+if [ $? -ne 0 ]; then
+  echo "Commit aborted, it seems you have an unencrypted secret in it !"
+  exit 1
+fi
+
+exit 0

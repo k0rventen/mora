@@ -1,0 +1,38 @@
+
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: explo
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: appchart
+      version: "1.8.0"
+      sourceRef:
+        kind: HelmRepository
+        name: appchart
+        namespace: flux-system
+      interval: 10m
+  values:
+    apps:
+      - name: explo
+        image: ghcr.io/lumepart/explo:v0.11.5@sha256:e4659bd1f4349a6355c0a89a0f718092de27b32d64ee24c76e1609089b060701
+        env:
+        - name: WEEKLY_EXPLORATION_SCHEDULE
+          value: "0 4 * * 1"
+        - name: EXECUTE_ON_START
+          value: "true"
+        volumeMounts:
+          - name: jellyfin-music
+            mountPath: /data
+          - name: explo-config
+            mountPath: /opt/explo/.env
+            subPath: .env
+        volumes:
+          - name: jellyfin-music
+            persistentVolumeClaim:
+              claimName: jellyfin-music
+          - name: explo-config
+            secret:
+              secretName: explo-config

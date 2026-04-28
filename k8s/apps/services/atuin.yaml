@@ -1,0 +1,89 @@
+# adapted from https://docs.atuin.sh/self-hosting/kubernetes/
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: atuin
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: appchart
+      version: "1.8.0"
+      sourceRef:
+        kind: HelmRepository
+        name: appchart
+        namespace: flux-system
+      interval: 10m
+  values:
+    apps:
+      - name: atuin-server
+        image: ghcr.io/atuinsh/atuin:18.15.2@sha256:e22d6256964bfbb59c170c14c9bd09a9687d2264817452d58726a4be379cbd47
+        env:
+          - name: ATUIN_DB_URI
+            valueFrom:
+              secretKeyRef:
+                name: atuin-secrets
+                key: ATUIN_DB_URI
+          - name: ATUIN_HOST
+            value: 0.0.0.0
+          - name: ATUIN_PORT
+            value: "8888"
+          - name: ATUIN_OPEN_REGISTRATION
+            value: "false"
+        containerSpec:
+          args:
+            - start
+        volumeMounts:
+          - name: atuin-data
+            mountPath: /config
+        volumes:
+          - name: atuin-data
+            persistentVolumeClaim:
+              claimName: atuin-data
+        pvc:
+          - atuin-data
+
+        service: 8888
+        ingress:
+          domain: atuin.cocointhe.cloud
+
+      - name: atuin-postgres
+        deploymentSpec:
+          strategy:
+            type: Recreate # This is important to ensure duplicate pods don't run and cause corruption
+
+        image: postgres:14@sha256:563a4985838fcb5ac2e60fd58a1055ceafa791665e75e18d236221af0d478a33
+        service: 5432
+        volumeMounts:
+          - name: atuin-postgres-data
+            mountPath: /var/lib/postgresql/data/
+        volumes:
+          - name: atuin-postgres-data
+            persistentVolumeClaim:
+              claimName: atuin-postgres-data
+        pvc:
+          - atuin-postgres-data
+        containerSpec:
+          lifecycle:
+            preStop:
+              exec:
+                # This ensures graceful shutdown see: https://stackoverflow.com/a/75829325/3437018
+                # Potentially consider using a `StatefulSet` instead of a `Deployment`
+                command:
+                  [
+                    "/usr/local/bin/pg_ctl stop -D /var/lib/postgresql/data -w -t 60 -m fast",
+                  ]
+        env:
+          - name: POSTGRES_DB
+            value: atuin
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: atuin-secrets
+                key: ATUIN_DB_PASSWORD
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: atuin-secrets
+                key: ATUIN_DB_USERNAME

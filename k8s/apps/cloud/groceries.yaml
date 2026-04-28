@@ -1,0 +1,36 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: groceries
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: appchart
+      version: "1.8.0"
+      sourceRef:
+        kind: HelmRepository
+        name: appchart
+        namespace: flux-system
+      interval: 10m
+  values:
+    apps:
+      - name: groceries
+        image: gitea.cocointhe.cloud/coco/groceries:0.2.0@sha256:4a709fb6018e57248f53b23b0410c21b1a558fc14f2692bb11101df85dfa2628
+        containerSpec:
+          envFrom:
+            - secretRef:
+                name: groceries-config
+        volumeMounts:
+          - name: groceries-data
+            mountPath: /app/data
+        volumes:
+          - name: groceries-data
+            persistentVolumeClaim:
+              claimName: groceries-data
+        service: 8000
+        ingress:
+          domain: lalistedecourses.cocointhe.cloud
+          public: true
+        pvc:
+          - groceries-data

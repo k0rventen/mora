@@ -1,0 +1,16 @@
+all:
+  children:
+    tepore:
+      hosts:
+        tepore:
+          ansible_host: 192.168.1.10
+
+  vars:
+
+    sysctl_inotify_settings:
+      - { name: fs.inotify.max_user_instances, value: 1024 }
+      - { name: fs.inotify.max_user_watches, value: 200000 }
+
+    tmpfs_mount_point: /var/log/pods
+    tmpfs_size: 256M
+    ansible_python_interpreter: auto_silent

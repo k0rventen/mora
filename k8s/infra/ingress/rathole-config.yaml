@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rathole-config
+stringData:
+  client.toml: ENC[AES256_GCM,data:fRYDT2qILoYJxvuh1YyTKP1qlcxfGtko2O2bwgn1LJuGvrwwzMcfG8jwjtVKuWKSNRcorE/+zFb1XADvZzNtG9JxREdRZ74orPDBJHsUYOIeYOUy/vr2COTfRKQ12u95xq27HEYaw3yfvj61hPCyoQfrhymAXYTjnE+FVWF9olqtL43CPcaLtGyhT8Y0VN9q/WTqCcDQYRHUhqygjIPep01YhLoIet/fMexVAZlCeBmyZhS4zp2VktfzFOGLAS7YIA==,iv:GFPHXzve5g3wjP5HggD2/f8woexaGwuQ3LOtB3QjVxQ=,tag:RmXGfIgasmGIry7bJPJkYg==,type:str]
+sops:
+  age:
+    - recipient: age16xc3m2q69s2le4hah3pcne50qn6mljhgc9mxekskwf0mp8fc0vaq5q5dz2
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBoUTVhYjFEeis1QjVqMVll
+        UFRyT2Zmc0szOTZSS2NkM0dNdDRzc3o2UjBJCnVYbkREUnZDQXRZajE4QThYK202
+        S2JzS1U3K21yVTlwMUl6RUY0NjFmQ1UKLS0tIGcxcy9WUVIrODNqcjJJbVR1dTlN
+        bFI5RVc2MlRHVEVPY1RkQkJubC9ZVHMKAqH1/GFI64wi7snArBteDlJTn+gYWetc
+        G9VpIBmq6kRRo6unUo31hrQZ7UUlY0Y3ZcsQbUXxk4Vl0tukfCz0WA==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2026-04-24T15:52:59Z"
+  mac: ENC[AES256_GCM,data:xiWThjMc+u8VnmnHtA+bgDbx21hckk92CVuiKk9OVTukSC6p63csmI17vX+wNAP4w1EzeGcPZDDJLTlps/SLm1RYFxnbiOeABH0xypWO4z0I4zH5nJkZjuR+7sooLhAvCUa9CPqzYHCQZ2Wc7Hw9an9t6q8C69q4P6DpTcTfJTk=,iv:7FIgUG5+HoPrNBrzeugyu6Xq8sUfiKJTbhVvecQtWQw=,tag:j+uYUJgPI2WOGZhRGwZfEQ==,type:str]
+  encrypted_regex: (token|email|^data$|^stringData$|webhook$|creds$|secrets$)
+  version: 3.12.2

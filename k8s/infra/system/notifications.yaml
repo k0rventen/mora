@@ -1,0 +1,60 @@
+# discord notifications
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Provider
+metadata:
+  name: discord
+  namespace: flux-system
+spec:
+  type: discord
+  secretRef:
+    name: discord-webhook
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Alert
+metadata:
+  name: discord-update
+  namespace: flux-system
+spec:
+  providerRef:
+    name: discord
+  eventSeverity: info
+  eventSources:
+    - kind: GitRepository
+      name: "*"
+    - kind: Kustomization
+      name: "*"
+    - kind: HelmRelease
+      name: "*"
+  exclusionList:
+    - "Dependencies do not meet ready condition"
+    - "stored artifact for commit"
+    - "server misbehaving"
+
+# ---
+# # grafana annotations
+# apiVersion: notification.toolkit.fluxcd.io/v1beta3
+# kind: Provider
+# metadata:
+#   name: grafana
+#   namespace: flux-system
+# spec:
+#   type: grafana
+#   address: "http://cloud-grafana.cloud.svc.cluster.local:3000/api/annotations"
+#   secretRef:
+#     name: grafana-token
+
+# ---
+# apiVersion: notification.toolkit.fluxcd.io/v1beta3
+# kind: Alert
+# metadata:
+#   name: grafana-annotations
+#   namespace: flux-system
+# spec:
+#   providerRef:
+#     name: grafana
+#   eventSeverity: info
+#   eventSources:
+#     - kind: Kustomization
+#       name: "*"
+#     - kind: HelmRelease
+#       name: "*"

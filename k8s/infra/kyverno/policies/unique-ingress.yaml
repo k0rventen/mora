@@ -1,0 +1,47 @@
+# Checks if the ingress do not conflict with another present on the same class
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-ingress-host-by-class
+  annotations:
+    policies.kyverno.io/title: Restrict Ingress Host by Class
+    policies.kyverno.io/category: Ingress
+    policies.kyverno.io/severity: high
+    policies.kyverno.io/subject: Ingress
+    policies.kyverno.io/description: >
+      Prevents creating an Ingress whose host overlaps with another Ingress
+      using the same ingressclass.
+spec:
+  validationFailureAction: Enforce
+  background: false
+  rules:
+    - name: check-duplicate-host-same-class
+      match:
+        any:
+          - resources:
+              kinds:
+                - Ingress
+      context:
+        - name: existing_ingresses
+          apiCall:
+            urlPath: "/apis/networking.k8s.io/v1/ingresses"
+            jmesPath: "items[?metadata.name != 'wildcard-fallback' && spec.ingressClassName == '{{request.object.spec.ingressClassName}}'].spec.rules[].host"
+      preconditions:
+        all:
+          - key: "{{ request.operation }}"
+            operator: Equals
+            value: CREATE
+          - key: "{{ request.object.spec.rules[].host }}"
+            operator: AnyIn
+            value: "{{ existing_ingresses }}"
+      validate:
+        message: >-
+          The Ingress host '{{request.object.spec.rules[].host}}' already exists
+          in another Ingress using the same ingressClassName '{{request.object.spec.ingressClassName}}'.
+          Each host must be unique per ingress class.
+        deny:
+          conditions:
+            all:
+              - key: "{{ request.object.spec.rules[].host }}"
+                operator: AnyIn
+                value: "{{ existing_ingresses }}"

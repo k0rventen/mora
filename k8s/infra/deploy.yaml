@@ -1,0 +1,260 @@
+# this deploys a GitOpsToolKit kustomization
+# for each folder, in its own ns
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: ingress
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: cert-manager
+  interval: 1h
+  targetNamespace: ingress
+  path: ./k8s/infra/ingress
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cert-manager
+  namespace: flux-system
+spec:
+  interval: 1h
+  targetNamespace: cert-manager
+  path: ./k8s/infra/cert-manager
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: certificates
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: cert-manager
+    - name: ingress
+  interval: 1h
+  targetNamespace: ingress
+  path: ./k8s/infra/certificates
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: tailscale
+  namespace: flux-system
+spec:
+  interval: 1h
+  targetNamespace: tailscale
+  path: ./k8s/infra/tailscale/operator
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+# we must split the tailscale resources and depend on the operator
+# because the crds won't be deployed the first time it's applied and the ks will fail
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: tailscale-config
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: tailscale
+  interval: 1h
+  targetNamespace: tailscale
+  path: ./k8s/infra/tailscale/config
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: restic
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: tailscale-config
+  interval: 1h
+  targetNamespace: backups
+  path: ./k8s/infra/backups
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: storage
+  namespace: flux-system
+spec:
+  interval: 1h
+  targetNamespace: storage-system
+  path: ./k8s/infra/storage
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+# apiVersion: kustomize.toolkit.fluxcd.io/v1
+# kind: Kustomization
+# metadata:
+#   name: longhorn
+#   namespace: flux-system
+# spec:
+#   interval: 1h
+#   targetNamespace: longhorn-system
+#   path: ./k8s/infra/longhorn
+#   prune: true
+#   sourceRef:
+#     kind: GitRepository
+#     name: flux-system
+
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: system
+  namespace: flux-system
+spec:
+  interval: 1h
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./k8s/infra/system
+  prune: true
+  timeout: 1m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: system-upgrade
+  namespace: flux-system
+spec:
+  interval: 1h
+  targetNamespace: system-upgrade
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./k8s/infra/system-upgrade/controller
+  prune: true
+  timeout: 10m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: system-upgrade-plans
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: system-upgrade
+  interval: 1h
+  targetNamespace: system-upgrade
+  path: ./k8s/infra/system-upgrade/plans
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+# apiVersion: kustomize.toolkit.fluxcd.io/v1
+# kind: Kustomization
+# metadata:
+#   name: kube-vip
+#   namespace: flux-system
+# spec:
+#   interval: 1h
+#   targetNamespace: kube-vip
+#   path: ./k8s/infra/kube-vip
+#   prune: true
+#   sourceRef:
+#     kind: GitRepository
+#     name: flux-system
+---
+# apiVersion: kustomize.toolkit.fluxcd.io/v1
+# kind: Kustomization
+# metadata:
+#   name: staging-vcluster
+#   namespace: flux-system
+# spec:
+#   interval: 1h
+#   targetNamespace: staging
+#   path: ./k8s/infra/vcluster
+#   prune: true
+#   sourceRef:
+#     kind: GitRepository
+#     name: flux-system
+# ---
+# apiVersion: kustomize.toolkit.fluxcd.io/v1
+# kind: Kustomization
+# metadata:
+#   name: vpa
+#   namespace: flux-system
+# spec:
+#   interval: 1h
+#   targetNamespace: vpa
+#   path: ./k8s/infra/vpa
+#   prune: true
+#   sourceRef:
+#     kind: GitRepository
+#     name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: kyverno
+  namespace: flux-system
+spec:
+  interval: 1h
+  targetNamespace: kyverno
+  path: ./k8s/infra/kyverno/deployment
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: kyverno-policies
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: kyverno
+  interval: 1h
+  targetNamespace: kyverno
+  path: ./k8s/infra/kyverno/policies
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: falco
+  namespace: flux-system
+spec:
+  interval: 1h
+  targetNamespace: falco
+  path: ./k8s/infra/falco
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system

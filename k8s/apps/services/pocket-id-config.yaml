@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pocket-id-config
+type: Opaque
+stringData:
+  APP_URL: ENC[AES256_GCM,data:061Dy403dR/8aqfQiOSUFH+D3+Eav99aoy8L19Y804Q=,iv:pCqhykJ/q1lIXH3rVwxQCjRg/h0uyAvYgvdLLYRtDvQ=,tag:+Y9rRPlZlt/5WJ/KgwM1rA==,type:str]
+  TRUST_PROXY: ENC[AES256_GCM,data:UeG1Xg==,iv:1GciFPUzK3bbLw/49tqgfGA1ZQ0emcYjJRJdrR2UwcE=,tag:NtcLLkYC2RNN9NUmbrV9Cw==,type:str]
+  PUID: ENC[AES256_GCM,data:CId/6Q==,iv:bgxkU7wMKr9wIGb04pIfv8KlPEg2BAlIE+puVBbAK/E=,tag:zuybdBzH6I5QkHHZPfa1jQ==,type:str]
+  PGID: ENC[AES256_GCM,data:TZuOZA==,iv:w0jQUw8PogB3urc+2nRRhjV71nvvn0J87Y/2LmNyJ3Q=,tag:FjDeLLhMbL/4KU57/8r//Q==,type:str]
+  ENCRYPTION_KEY: ENC[AES256_GCM,data:6tlDfYoo3NVXWeULYe+QZdb0yuivvAstymZPCAFyNvVI207qwhGvEvT4J3WGfzU8D1DBr11Kxobqit6QxQj9+w==,iv:1OuuJ025/Os+jOFf6KzriEB2U9W2Fjh603CYTtVR6KA=,tag:jxKdF05HhjH7OG6YFlJgTA==,type:str]
+sops:
+  age:
+    - recipient: age16xc3m2q69s2le4hah3pcne50qn6mljhgc9mxekskwf0mp8fc0vaq5q5dz2
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBpK1BqTFMyWlEzRWo4aGp5
+        OUdjVFNhSis3bHNPZFIwNXhKalRCTG9nSlRrCkc4S0dIcUVCVzNYT0RlQU5aNGVw
+        YmFjRTRkeEUzTXFBc01JR1NPQUQrbDgKLS0tIHVzcjZmWnRqMmtFcGN4VXRGRzZW
+        ZTZRSlFxUGR5OGt6dTFZUHUzNlZtdzQKffIhBLb/kNFYQWyltjbrbDUTnUiIVamg
+        E1TsBpJkswPycHx/gQhWy1JCFdRh7VKwfcRxeKoq8zx8MGhVF4z9QA==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2026-01-05T19:12:43Z"
+  mac: ENC[AES256_GCM,data:odm3YIqKUGXHGKPV7U6xcR+qVZuvYAJgJJqlQAQhEcMmjnhljDoZypBUXO984cFOOOLe0xBLRuIPLUYmMMlZQp0/l9HU8JAfaIRCww1MlMWf8hE35qwV3r4PQ6Q+Q4QsvkkmRtuBOsbIovS43qtE/jWVzjQ1yZ+YgOzmh4W8mEo=,iv:DxF7b+7j9BoSJN+W9PCKZ3qRAyBXSlnzR6Yz4p9tV7E=,tag:iYyKP6PS6Ju+JwQPC/FcUw==,type:str]
+  encrypted_regex: (token|email|^data$|^stringData$|webhook$|creds$|secrets$)
+  version: 3.11.0

@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-cocointhe-cloud
+spec:
+  secretName: wildcard-cocointhe-cloud-tls
+  dnsNames:
+    - cocointhe.cloud
+    - "*.cocointhe.cloud"
+  issuerRef:
+    name: ovh-lets-encrypt-prod
+    kind: Issuer

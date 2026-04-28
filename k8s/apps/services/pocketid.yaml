@@ -1,0 +1,36 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: pocket-id
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: appchart
+      version: "1.8.0"
+      sourceRef:
+        kind: HelmRepository
+        name: appchart
+        namespace: flux-system
+      interval: 10m
+  values:
+    apps:
+      - name: pocket-id
+        image: ghcr.io/pocket-id/pocket-id:v2.6.2@sha256:1cc51e5b36fa7ec31368d3efb24ba362be6dce20f3cc0a2852843527bd5110f0
+        volumeMounts:
+          - name: pocketid-data
+            mountPath: /app/data
+        containerSpec:
+          envFrom:
+            - secretRef:
+                name: pocket-id-config
+        volumes:
+          - name: pocketid-data
+            persistentVolumeClaim:
+              claimName: pocketid-data
+        service: 1411
+        ingress:
+          domain: pocketid.cocointhe.cloud
+          public: true
+        pvc:
+          - pocketid-data

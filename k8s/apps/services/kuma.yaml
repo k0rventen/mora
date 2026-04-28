@@ -1,0 +1,63 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: uptime-kuma
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: appchart
+      version: "1.8.0"
+      sourceRef:
+        kind: HelmRepository
+        name: appchart
+        namespace: flux-system
+      interval: 10m
+  values:
+    apps:
+      - name: uptime-kuma
+        image: louislam/uptime-kuma:2.2.1-slim@sha256:059b49d6473904f2c8cba97582fd37cf4433c069816146e544afe7a7f3687f93
+        service: 3001
+        volumeMounts:
+          - name: uptime-kuma-data
+            mountPath: /app/data
+        volumes:
+          - name: uptime-kuma-data
+            persistentVolumeClaim:
+              claimName: uptime-kuma-data
+        ingress:
+          domain: uptime.cocointhe.cloud
+        pvc:
+          - uptime-kuma-data
+---
+# # kuma checks
+# apiVersion: networking.k8s.io/v1
+# kind: NetworkPolicy
+# metadata:
+#   name: allow-kuma-checks
+# spec:
+#   podSelector:
+#     matchLabels:
+#       app: uptime-kuma
+#   policyTypes:
+#   - Egress
+#   egress:
+#   # for dns/http checks
+#   - to:
+#     - ipBlock:
+#         cidr: 0.0.0.0/0
+#     ports:
+#     - protocol: UDP
+#       port: 53
+#     - protocol: TCP
+#       port: 443
+#   # for local infra checks
+#   - to:
+#     - ipBlock:
+#         cidr: 192.168.1.0/24
+
+#     # for remote infra checks
+#   - to:
+#     - namespaceSelector:
+#         matchLabels:
+#           kubernetes.io/metadata.name: tailscale

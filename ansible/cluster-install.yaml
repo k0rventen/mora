@@ -1,0 +1,55 @@
+---
+- name: Bootstrap k3s cluster
+  hosts: all
+  become: true
+  tasks:
+    - name: Ensure log directory exists
+      ansible.builtin.file:
+        path: "{{ tmpfs_mount_point }}"
+        state: directory
+        owner: root
+        group: root
+        mode: '0750'
+
+    - name: Mount tmpfs for k3s pod logs
+      ansible.posix.mount:
+        path: "{{ tmpfs_mount_point }}"
+        src: tmpfs
+        fstype: tmpfs
+        opts: "size={{ tmpfs_size }},noatime"
+        state: mounted
+        boot: true
+
+    - name: Apply inotify sysctl settings
+      ansible.posix.sysctl:
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+        state: present
+        reload: true
+        sysctl_file: /etc/sysctl.d/99-inotify.conf
+      loop: "{{ sysctl_inotify_settings }}"
+
+
+    - name: Configure kubelet log rotation for k3s
+      copy:
+        dest: /etc/rancher/k3s/config.yaml
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          kubelet-arg:
+            - container-log-max-size=4Mi
+            - container-log-max-files=2
+
+    - name: Install k3s server if not already installed
+      shell: |
+        curl -sfL https://get.k3s.io | \
+        INSTALL_K3S_VERSION={{ k3s_version }} \
+        sh -s - \
+        --write-kubeconfig-mode 644 \
+        --disable-helm-controller \
+        --disable=traefik \
+        --disable=local-storage \
+        --disable=metrics-server
+      args:
+        creates: /usr/local/bin/k3s

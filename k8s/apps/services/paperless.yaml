@@ -1,0 +1,68 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: paperless
+spec:
+  interval: 10m
+  timeout: 20m
+  chart:
+    spec:
+      chart: appchart
+      version: "1.8.0"
+      sourceRef:
+        kind: HelmRepository
+        name: appchart
+        namespace: flux-system
+      interval: 10m
+  values:
+    apps:
+      - name: paperless-ngx
+        image: ghcr.io/paperless-ngx/paperless-ngx:2.20.15@sha256:6c86cad803970ea782683a8e80e7403444c5bf3cf70de63b4d3c8e87500db92f
+        volumeMounts:
+          - name: paperless-data
+            mountPath: /usr/src/paperless/data
+          - name: paperless-media
+            mountPath: /usr/src/paperless/media
+          - name: paperless-export
+            mountPath: /usr/src/paperless/export
+          - name: paperless-consume
+            mountPath: /usr/src/paperless/consume
+        env:
+          - name: PAPERLESS_REDIS
+            value: redis://paperless-redis:6379
+          - name: PAPERLESS_OCR_LANGUAGE
+            value: fra
+          - name: PAPERLESS_BIND_ADDR
+            value: 0.0.0.0
+          - name: PAPERLESS_URL
+            value: https://paperless.cocointhe.cloud
+        containerSpec:
+          envFrom:
+            - secretRef:
+                name: paperless-oidc-config
+        volumes:
+          - name: paperless-data
+            persistentVolumeClaim:
+              claimName: paperless-data
+          - name: paperless-media
+            persistentVolumeClaim:
+              claimName: paperless-media
+          - name: paperless-export
+            persistentVolumeClaim:
+              claimName: paperless-export
+          - name: paperless-consume
+            persistentVolumeClaim:
+              claimName: paperless-consume
+
+        service: 8000
+        ingress:
+          domain: paperless.cocointhe.cloud
+        pvc:
+          - paperless-data
+          - paperless-media
+          - paperless-export
+          - paperless-consume
+
+      - name: paperless-redis
+        image: redis:8.4.0-bookworm@sha256:43355efd22490e31ca14b9d569367d05121e2be61fd8e47937563ae2a80952ae
+        service: 6379

@@ -1,0 +1,82 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", "docker:pinDigests", ":semanticCommits"],
+
+  // this is handled through a specific github action (see .github/workflows/fluxcd.yaml)
+  "ignorePaths": ["k8s/flux/flux-system/gotk-components.yaml"],
+
+  "flux": { "managerFilePatterns": ["/k8s/.+\\.ya?ml$/"] },
+  "helm-values": { "managerFilePatterns": ["/k8s/.+\\.ya?ml$/"] },
+  "kubernetes": { "managerFilePatterns": ["/k8s/.+\\.ya?ml$/"] },
+
+  "packageRules": [
+    // automerge patch updates
+    {
+      "matchUpdateTypes": ["patch"],
+      "automerge": true},
+
+    // allow pin but no digest update 
+    { "matchUpdateTypes": ["pin"], "enabled": true },
+    { "matchUpdateTypes": ["digest"], "enabled": false },
+
+    // renovate spams too much, so only update once a month
+    { "matchPackageNames": ["renovate/renovate"], "schedule": ["* * 1 * *"]},  
+
+    // do not update adguard without active standby
+    { "matchPackageNames": ["adguard/adguardhome"], "automerge": false},  
+    
+    // owasp versionning is weird
+    {
+      "description": "Handle OWASP CRS container with nginx-alpine timestamp suffix",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["owasp/modsecurity-crs"],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-nginx-alpine-(?<build>\\d{12})$"
+    },
+    // group immich related updates 
+    {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["/.*immich-app/immich-.*/"],
+      "groupName": "immich"},
+    
+    // do not automerge k3s as it upgrades the nodes
+    { "matchPackageNames": ["k3s"], "automerge": false },
+    
+    // do not change the versionning on the UpgradePlan Images as they will automatically use the one matching the version of the plan
+    { "matchPackageNames":["rancher/k3s-upgrade"],"enabled": false}
+  ],
+
+  // k3s stable release fetcher (instead of latest github release)
+  // update the Plan CRD as well as the ansible var
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/inventory\\.yaml$/"],
+      "matchStrings": ["k3s_version:\\s*(?<currentValue>.*?)\\n"],
+      "depNameTemplate": "k3s",
+      "versioningTemplate": "semver-coerced",
+      "datasourceTemplate": "custom.k3s"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/control-plane\\.yaml$/","/worker\\.yaml$/"],
+      "matchStrings": ["version:\\s*(?<currentValue>.*?)\\n"],
+      "depNameTemplate": "k3s",
+      "versioningTemplate": "regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-k3s(?<build>.+)$",
+      "datasourceTemplate": "custom.k3supgrade"
+    }
+  ],
+  "customDatasources": {
+    "k3s": {
+      "defaultRegistryUrlTemplate": "https://update.k3s.io/v1-release/channels",
+      "transformTemplates": [
+        "{'releases':[{'version': $.data[id = 'stable'].latest}]}"
+      ]
+    },
+    "k3supgrade": {
+      "defaultRegistryUrlTemplate": "https://update.k3s.io/v1-release/channels",
+      "transformTemplates": [
+        "{'releases':[{'version': $replace($.(data[id = 'stable'].latest),'+','-')}]}"
+      ]
+    }
+  }
+}

@@ -1,0 +1,164 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: traefik
+  namespace: ingress
+spec:
+  interval: 24h
+  url: https://traefik.github.io/charts
+---
+# LAN traefik for all services 
+# is default ingressclass
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: traefik
+  namespace: ingress
+spec:
+  interval: 10m
+  timeout: 5m
+  chart:
+    spec:
+      chart: traefik
+      version: "39.0.8"
+      sourceRef:
+        kind: HelmRepository
+        name: traefik
+      interval: 1h
+  releaseName: traefik
+  targetNamespace: ingress
+  install:
+    crds: Create
+  upgrade:
+    crds: CreateReplace
+  values:
+    global:
+      checkNewVersion: false
+      sendAnonymousUsage: false
+    # experimental:
+    #   plugins:
+    #     oidc:
+    #       moduleName: github.com/lukaszraczylo/traefikoidc
+    #       version: v0.8.21
+    tlsStore:
+      default:
+        certificates:
+          - secretName: wildcard-cocointhe-cloud-tls
+    service:
+      enabled: true
+      type: LoadBalancer
+    ingressClass:
+      enabled: true
+      isDefaultClass: true
+      name: "traefik"
+    providers:
+      kubernetesCRD:
+        enabled: true
+      kubernetesIngress:
+        enabled: true
+        ingressClass: "traefik"
+        publishedService:
+          enabled: false
+    ports:
+      web:
+        http:
+          redirections:
+            entryPoint:
+              to: websecure
+              scheme: https
+              permanent: true
+    logs:
+      general:
+        format: "json"
+        level: "WARN"
+      access:
+        enabled: true
+        format: "json"
+        fields:
+          headers:
+            defaultmode: drop
+            names:
+              User-Agent: keep
+
+---
+# specific traefik for routing traffic from WAN
+# only listens for ingressclass 'traefik-tunnel' and exposed internally
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: traefik-tunnel
+  namespace: ingress
+spec:
+  interval: 10m
+  timeout: 5m
+  chart:
+    spec:
+      chart: traefik
+      version: "39.0.8"
+      sourceRef:
+        kind: HelmRepository
+        name: traefik
+      interval: 1h
+  releaseName: traefik-tunnel
+  targetNamespace: ingress
+  values:
+    global:
+      checkNewVersion: false
+      sendAnonymousUsage: false
+    experimental:
+      plugins:
+        geoblock:
+          moduleName: "github.com/PascalMinder/geoblock"
+          version: "v0.3.7"
+        modsec:
+          moduleName: "github.com/acouvreur/traefik-modsecurity-plugin"
+          version: "v1.3.0"
+    service:
+      enabled: true
+      type: ClusterIP
+    ingressClass:
+      enabled: true
+      isDefaultClass: false
+      name: "traefik-tunnel"
+ 
+    tlsStore:
+      default:
+        certificates:
+          - secretName: wildcard-cocointhe-cloud-tls
+    providers:
+      kubernetesCRD:
+        enabled: true
+      kubernetesIngress:
+        enabled: true
+        ingressClass: "traefik-tunnel"
+    ports:
+      web:
+        http:
+          redirections:
+            entryPoint:
+              to: websecure
+              scheme: https
+              permanent: true
+      websecure:
+        http:
+          middlewares:
+          - ingress-geoblock@kubernetescrd
+          - ingress-errors@kubernetescrd 
+          - ingress-modsec@kubernetescrd
+        forwardedHeaders:
+          trustedIPs: ["10.0.0.0/8"]
+        proxyProtocol:
+          trustedIPs: ["10.0.0.0/8"]
+    logs:
+      general:
+        format: "json"
+        level: "WARN"
+      access:
+        enabled: true
+        format: "json"
+        fields:
+          headers:
+            defaultmode: drop
+            names:
+              User-Agent: keep
+              X-Ipcountry: keep

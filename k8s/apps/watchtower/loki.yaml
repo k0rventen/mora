@@ -1,0 +1,34 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: loki
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: appchart
+      version: "1.8.0"
+      sourceRef:
+        kind: HelmRepository
+        name: appchart
+        namespace: flux-system
+      interval: 10m
+  values:
+    apps:
+      - name: loki
+        image: grafana/loki:3.7.1@sha256:73e905b51a7f917f7a1075e4be68759df30226e03dcb3cd2213b989cc0dc8eb4
+        containerSpec:
+          args:
+            - -config.file=/etc/loki/local-config.yaml
+            - -querier.parallelise-shardable-queries=false
+            - -reporting.enabled=false
+        volumeMounts:
+          - name: loki-data
+            mountPath: /loki
+        volumes:
+          - name: loki-data
+            persistentVolumeClaim:
+              claimName: loki-data
+        service: 3100
+        pvc:
+          - loki-data

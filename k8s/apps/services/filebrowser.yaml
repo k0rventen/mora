@@ -1,0 +1,37 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: filebrowser
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: appchart
+      version: "1.8.0"
+      sourceRef:
+        kind: HelmRepository
+        name: appchart
+        namespace: flux-system
+      interval: 10m
+  values:
+    apps:
+      - name: filebrowser
+        image: ghcr.io/gtsteffaniak/filebrowser:1.3.0-stable@sha256:d5d2cb23f49e9e0a77ab12dca92a2b1bcc5deb11d8ce3c23b2175297d4a1182b
+        volumeMounts:
+          - name: filebrowser-data
+            mountPath: /data
+          - name: filebrowser-config
+            mountPath: /home/filebrowser/data/config.yaml
+            subPath: config.yaml
+        volumes:
+          - name: filebrowser-data
+            persistentVolumeClaim:
+              claimName: filebrowser-data
+          - name: filebrowser-config
+            secret:
+              secretName: filebrowser-config
+        service: 8080
+        ingress:
+          domain: files.cocointhe.cloud
+        pvc:
+          - filebrowser-data

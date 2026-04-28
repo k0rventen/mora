@@ -1,0 +1,83 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gitea
+spec:
+  interval: 24h
+  chart:
+    spec:
+      chart: appchart
+      version: "1.8.0"
+      sourceRef:
+        kind: HelmRepository
+        name: appchart
+        namespace: flux-system
+      interval: 1h
+  values:
+    apps:
+      - name: gitea
+        image: gitea/gitea:1.26.1-rootless@sha256:4c4256497e2e237ddebdd30986c7ce52cb6f936b3e90c34bb9f4665714599f62
+        service: 3000
+        deploymentSpec:
+          strategy:
+            type: Recreate
+        ingress:
+          domain: gitea.cocointhe.cloud
+        env:
+          - name: GITEA_RUNNER_REGISTRATION_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: gitea-ci-token
+                key: token
+        pvc:
+          - gitea-data
+          - gitea-conf
+        volumeMounts:
+          - name: gitea-data
+            mountPath: /var/lib/gitea
+          - name: gitea-conf
+            mountPath: /etc/gitea
+        volumes:
+          - name: gitea-data
+            persistentVolumeClaim:
+              claimName: gitea-data
+          - name: gitea-conf
+            persistentVolumeClaim:
+              claimName: gitea-conf
+      - name: runner
+        image: gitea/act_runner:0.5.0-dind-rootless@sha256:319d79e7cee04f4980512d0358ce899776e8f81377ac9efbba9a86ac2c290b00
+        volumeMounts:
+          - name: docker-daemon-config
+            mountPath: /etc/docker/daemon.json
+            subPath: daemon.json
+          - name: docker-config
+            mountPath: /home/rootless/.docker/config.json
+            subPath: config.json
+        volumes:
+          - name: docker-daemon-config
+            configMap:
+              name: docker-daemon-dns
+          - name: docker-config
+            secret:
+              secretName: docker-config
+        env:
+          - name: GITEA_INSTANCE_URL
+            value: "https://gitea.cocointhe.cloud"
+          - name: GITEA_RUNNER_LABELS
+            value: "ubuntu-latest:docker://gitea.cocointhe.cloud/coco/ci-runner" # lighter image with only git npm and docker
+          - name: GITEA_RUNNER_REGISTRATION_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: gitea-ci-token
+                key: token
+        containerSpec:
+          securityContext:
+            privileged: true
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: docker-daemon-dns
+data:
+  daemon.json: |
+    {"dns": ["192.168.1.10"]}

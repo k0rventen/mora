@@ -1,0 +1,51 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: waf
+spec:
+  interval: 24h
+  chart:
+    spec:
+      chart: appchart
+      version: 1.8.0
+      sourceRef:
+        kind: HelmRepository
+        name: appchart
+        namespace: flux-system
+      interval: 1h
+  values:
+    apps:
+      - name: dummy
+        image: traefik/whoami@sha256:200689790a0a0ea48ca45992e0450bc26ccab5307375b41c84dfc4f2475937ab
+        service: 80
+      - name: waf
+        image: owasp/modsecurity-crs:4.25.0-nginx-alpine-202604040104@sha256:f7ebbff3739ad03cff3062537543129598f94ab304ed19b895e20ddf14e1e1da
+        service: 8080
+        env:
+        - name: ALLOWED_METHODS
+          value: GET HEAD POST OPTIONS DELETE PUT PATCH
+        - name: BLOCKING_PARANOIA
+          value: "1"
+        - name: ANOMALY_INBOUND
+          value: "5"
+        - name: ANOMALY_OUTBOUND
+          value: "5"
+        - name: BACKEND
+          value: "http://dummy"
+        volumeMounts:
+          - name: rulesets
+            mountPath: /etc/modsecurity.d/owasp-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
+            subPath: REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
+        volumes:
+          - name: rulesets
+            configMap:
+              name: waf-rulesets
+    configmaps:
+      waf-rulesets:
+        REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf: |
+          SecRule REQUEST_HEADERS:Referer "@beginsWith https://haven.cocointhe.cloud" \
+              "id:1003,\
+              phase:1,\
+              pass,\
+              nolog,\
+              ctl:ruleEngine=Off"

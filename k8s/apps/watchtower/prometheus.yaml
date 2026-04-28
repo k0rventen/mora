@@ -1,0 +1,37 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: prometheus
+spec:
+  interval: 24h
+  url: https://prometheus-community.github.io/helm-charts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: prometheus
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: prometheus
+      version: "29.2.1"
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus
+      interval: 10m
+  values:
+    scrapeConfigs:
+      kubernetes-api-servers:
+        enabled: false
+    prometheus-pushgateway:
+      enabled: false
+    alertmanager:
+      enabled: false
+    kube-state-metrics:
+      enabled: true
+    prometheus-node-exporter:
+      enabled: true
+  valuesFrom:
+    - kind: Secret
+      name: prom-config

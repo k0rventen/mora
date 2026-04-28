@@ -1,0 +1,35 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: iplookup
+spec:
+  interval: 24h
+  chart:
+    spec:
+      chart: appchart
+      version: 1.8.0
+      sourceRef:
+        kind: HelmRepository
+        name: appchart
+        namespace: flux-system
+      interval: 1h
+  values:
+    apps:
+      - name: iplookup
+        image: gitea.cocointhe.cloud/coco/iplookup:v0.2.1@sha256:061c008407997b42455d63c5cb19c23e87ca7b50db645b06d5cf83a28c46c690
+        service: 8000
+        env:
+          - name: IPINFO_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: iplookup-secret
+                key: IPINFO_TOKEN
+        volumeMounts:
+          - name: iplookup-data
+            mountPath: /app/data
+        volumes:
+          - name: iplookup-data
+            persistentVolumeClaim:
+              claimName: iplookup-data
+        pvc:
+          - iplookup-data

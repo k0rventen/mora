@@ -1,0 +1,64 @@
+# we deny all egress traffic by default
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-all
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+---
+# allow at least dns to coredns for all
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector: {}
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+    - port: 53
+      protocol: UDP
+---
+# this is kinda weird, but allowing the VIP for self access (mainly for OIDC callbacks)
+# do not work, but setting the pod subnet as cidr works, while using 443 (although it's not the final port)
+# this does not allow local svc comm (xx.ns.svc.cluster.local) as the subnet is different
+# so the deny-all still works
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-self-access
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - ipBlock: # VIP of the cluster
+        cidr: 192.168.0.0/16
+    ports:
+    - protocol: TCP
+      port: 443
+---
+# allow at least dns to coredns for all
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-pocket-id
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector: {}
+      podSelector:
+        matchLabels:
+          app: pocket-id

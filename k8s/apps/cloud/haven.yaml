@@ -1,0 +1,36 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: haven
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: appchart
+      version: "1.8.0"
+      sourceRef:
+        kind: HelmRepository
+        name: appchart
+        namespace: flux-system
+      interval: 10m
+  values:
+    apps:
+      - name: haven
+        image: ghcr.io/ancsemi/haven:3.10.4@sha256:56c95c7bb4e3a7006eb51c54c5789752d42e85ebde1f89d8fce47e6006956294
+        # containerSpec:
+        #   envFrom:
+        #     - secretRef:
+        #         name: haven-config
+        volumeMounts:
+          - name: haven-data
+            mountPath: /data
+        volumes:
+          - name: haven-data
+            persistentVolumeClaim:
+              claimName: haven-data
+        service: 3000
+        ingress:
+          domain: haven.cocointhe.cloud
+          public: true
+        pvc:
+          - haven-data

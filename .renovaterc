@@ -15,9 +15,9 @@
       "matchUpdateTypes": ["patch"],
       "automerge": true},
 
-    // allow pin but no digest update 
+    // allow pin and digest
     { "matchUpdateTypes": ["pin"], "enabled": true },
-    { "matchUpdateTypes": ["digest"], "enabled": false },
+    { "matchUpdateTypes": ["digest"], "enabled": true },
 
     // renovate spams too much, so only update once a month
     { "matchPackageNames": ["renovate/renovate"], "schedule": ["* * 1 * *"]},  

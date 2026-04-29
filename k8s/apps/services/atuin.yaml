@@ -53,11 +53,11 @@ spec:
           strategy:
             type: Recreate # This is important to ensure duplicate pods don't run and cause corruption
 
-        image: postgres:14@sha256:563a4985838fcb5ac2e60fd58a1055ceafa791665e75e18d236221af0d478a33
+        image: postgres:18.3-alpine
         service: 5432
         volumeMounts:
           - name: atuin-postgres-data
-            mountPath: /var/lib/postgresql/data/
+            mountPath: /var/lib/postgresql
         volumes:
           - name: atuin-postgres-data
             persistentVolumeClaim:
@@ -70,10 +70,7 @@ spec:
               exec:
                 # This ensures graceful shutdown see: https://stackoverflow.com/a/75829325/3437018
                 # Potentially consider using a `StatefulSet` instead of a `Deployment`
-                command:
-                  [
-                    "/usr/local/bin/pg_ctl stop -D /var/lib/postgresql/data -w -t 60 -m fast",
-                  ]
+                command: ["/usr/local/bin/pg_ctl stop -D /var/lib/postgresql/data -w -t 60 -m fast"]
         env:
           - name: POSTGRES_DB
             value: atuin

@@ -12,9 +12,9 @@ spec:
       template:
         spec:
           restartPolicy: Never
-          hostname: drupelet-1 # set hostname so the backups use this instead of a pod generated name
+          hostname: cluster # set hostname so the backups use this for consistency instead of a pod generated name
           containers:
-            - image: gitea.cocointhe.cloud/coco/restic:2025.09.16-fc12269@sha256:ce4a0ee7b8695e2983bd3c528ca54d259c9547b6f728353ce26b8d7be1cd7078
+            - image: gitea.cocointhe.cloud/coco/restic:v0.1.0
               name: restic-backup
               envFrom:
                 - secretRef:
@@ -22,14 +22,21 @@ spec:
               volumeMounts:
                 - name: key-volume
                   mountPath: /tmp/key
-                - mountPath: /nfs
-                  name: nfs-root
+                - mountPath: /backups
+                  name: backup-repo
+                  readOnly: false
+                - mountPath: /data
+                  name: data-root
                   readOnly: false
           volumes:
             - name: key-volume
               secret:
                 secretName: sshkey
-            - name: nfs-root
+            - name: data-root
               hostPath:
-                path: /nfs
+                path: /data
+                type: Directory
+            - name: backup-repo
+              hostPath:
+                path: /backups
                 type: Directory

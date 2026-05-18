@@ -16,7 +16,7 @@ spec:
   values:
     apps:
       - name: haven
-        image: ghcr.io/ancsemi/haven:3.16.0@sha256:a5f0fafb5941078e6ad61317b4969a0883c050f22ee436c2f39c5a325b296f27
+        image: ghcr.io/ancsemi/haven:3.16.13@sha256:b874c3daa8de7abff2b1ce5c2bf101752db226965fa979b0157567a5e93a733c
         # containerSpec:
         #   envFrom:
         #     - secretRef:

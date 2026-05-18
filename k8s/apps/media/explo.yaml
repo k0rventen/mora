@@ -17,15 +17,23 @@ spec:
   values:
     apps:
       - name: explo
-        image: ghcr.io/lumepart/explo:v0.11.5@sha256:e4659bd1f4349a6355c0a89a0f718092de27b32d64ee24c76e1609089b060701
+        image: ghcr.io/lumepart/explo:v1.0.1@sha256:d4b55bf5c8f2099815e1613a74d9d5ceb1ee6a3fc8f973a19c60cf842bc8d8df
         env:
         - name: WEEKLY_EXPLORATION_SCHEDULE
           value: "0 4 * * 1"
         - name: EXECUTE_ON_START
           value: "true"
+        - name: WEB_UI
+          value: "true"
+        - name: UI_USERNAME
+          value: "testuser"
+        - name: UI_PASSWORD
+          value: "testpassword"
         volumeMounts:
           - name: jellyfin-music
             mountPath: /data
+          - name: explo-data
+            mountPath: /opt/explo/config
           - name: explo-config
             mountPath: /opt/explo/.env
             subPath: .env
@@ -33,6 +41,14 @@ spec:
           - name: jellyfin-music
             persistentVolumeClaim:
               claimName: jellyfin-music
+          - name: explo-data
+            persistentVolumeClaim:
+              claimName: explo-data
           - name: explo-config
             secret:
               secretName: explo-config
+        service: 7288
+        ingress:
+          domain: explo.cocointhe.cloud
+        pvc:
+          - explo-data

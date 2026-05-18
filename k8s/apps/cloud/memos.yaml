@@ -17,6 +17,9 @@ spec:
     apps:
       - name: memos
         image: ghcr.io/usememos/memos:0.28.0
+        env:
+        - name: MEMOS_PORT
+          value: "8081"
         volumeMounts:
           - name: memos-data
             mountPath: /var/opt/memos
@@ -24,7 +27,7 @@ spec:
           - name: memos-data
             persistentVolumeClaim:
               claimName: memos-data
-        service: 5230
+        service: 8081
         ingress:
           domain: memos.cocointhe.cloud
           public: true

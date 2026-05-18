@@ -18,6 +18,11 @@ spec:
     apps:
       - name: explo
         image: ghcr.io/lumepart/explo:v1.0.1@sha256:d4b55bf5c8f2099815e1613a74d9d5ceb1ee6a3fc8f973a19c60cf842bc8d8df
+        containerSpec:
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh","-c","cp /tmp/.env /opt/explo/.env"]
         env:
         - name: WEEKLY_EXPLORATION_SCHEDULE
           value: "0 4 * * 1"
@@ -35,7 +40,7 @@ spec:
           - name: explo-data
             mountPath: /opt/explo/config
           - name: explo-config
-            mountPath: /opt/explo/.env
+            mountPath: /tmp/.env
             subPath: .env
         volumes:
           - name: jellyfin-music

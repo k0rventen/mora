@@ -12,12 +12,12 @@
   "packageRules": [
     // automerge patch updates
     {
-      "matchUpdateTypes": ["patch"],
+      "matchUpdateTypes": ["patch", "pin"],
       "automerge": true},
 
-    // allow pin and digest
+    // disallow digest updates as tags should be immutable
     { "matchUpdateTypes": ["pin"], "enabled": true },
-    { "matchUpdateTypes": ["digest"], "enabled": true },
+    { "matchUpdateTypes": ["digest"], "enabled": false },
 
     // renovate spams too much, so only update once a month
     { "matchPackageNames": ["renovate/renovate"], "schedule": ["* * 1 * *"]},  

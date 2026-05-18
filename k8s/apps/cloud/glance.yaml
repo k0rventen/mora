@@ -80,12 +80,6 @@ spec:
                       collapse-after: 8
                       feeds:
                       - url: https://www.phoronix.com/phoronix-rss.php
-                    - type: rss
-                      cache: 1h
-                      title: SE Unix & Linux
-                      collapse-after: 8
-                      feeds:
-                      - url: https://unix.stackexchange.com/feeds/week
                   - type: videos
                     cache: 1h
                     style: grid-cards
@@ -94,9 +88,8 @@ spec:
                       - UCXuqSBlHAE6Xw-yeJA0Tunw # LTT
                       - UCdBK94H6oZT2Q7l0-b0xmMg # SC
                       - UCeeFfhMcJa1kjtfZAGskOCA # TL
-                      - UCIgNWXsJcFwvFptmUic6wSw # alpard
-                      - UCz7mxur_emoA8fl9kvizgtA # Jzred
                       - UCR-DXc1voovS8nhAvccRZhg # JG
+
 ---
 
 # glance -> web for news fetching

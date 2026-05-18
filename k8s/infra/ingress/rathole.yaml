@@ -16,7 +16,7 @@ spec:
   values:
     apps:
       - name: rathole
-        image: rapiz1/rathole:v0.5.0
+        image: rapiz1/rathole:v0.5.0@sha256:52f3a087ccb89358705de1f6ac0e923a00d066fe9a8548ab7a79ad21adab93fa
         containerSpec:
           args:
             - --client

@@ -69,13 +69,13 @@
     "k3s": {
       "defaultRegistryUrlTemplate": "https://update.k3s.io/v1-release/channels",
       "transformTemplates": [
-        "{'releases':[{'version': $.data[id = 'stable'].latest}]}"
+        "{'releases':[{'version': $.data[id = 'latest'].latest}]}"
       ]
     },
     "k3supgrade": {
       "defaultRegistryUrlTemplate": "https://update.k3s.io/v1-release/channels",
       "transformTemplates": [
-        "{'releases':[{'version': $replace($.(data[id = 'stable'].latest),'+','-')}]}"
+        "{'releases':[{'version': $replace($.(data[id = 'latest'].latest),'+','-')}]}"
       ]
     }
   }

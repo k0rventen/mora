@@ -17,7 +17,7 @@ spec:
               claimName: renovate-cache
           containers:
             - name: renovate
-              image: renovate/renovate:43.170.19@sha256:785a05e2cf7145f6d44cf7e1ef0bbf4660e9daa0675f6b545de618ebe6d2d6d7
+              image: renovate/renovate:43.207.3@sha256:af0ea0750c46eda2f2af916d2a32228d699f1d69027f1396d4f8bbcb1497e818
               args:
                 - k0rventen/tepore
               envFrom:

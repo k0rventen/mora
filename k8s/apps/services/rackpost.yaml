@@ -1,0 +1,36 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: rackpost
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: appchart
+      version: "1.8.0"
+      sourceRef:
+        kind: HelmRepository
+        name: appchart
+        namespace: flux-system
+      interval: 10m
+  values:
+    apps:
+      - name: rackpost
+        image: gitea.cocointhe.cloud/coco/rackpost:v0.2.3
+        volumeMounts:
+          - name: rackpost-data
+            mountPath: /data
+        containerSpec:
+          envFrom:
+            - secretRef:
+                name: rackpost-config
+        volumes:
+          - name: rackpost-data
+            persistentVolumeClaim:
+              claimName: rackpost-data
+        service: 8000
+        ingress:
+          domain: rackpost.cocointhe.cloud
+          public: true
+        pvc:
+          - rackpost-data

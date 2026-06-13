@@ -16,7 +16,7 @@ spec:
                 claimName: jellyfin-music
           containers:
             - name: fetchcast
-              image: gitea.cocointhe.cloud/coco/fetchcast:v0.1.0
+              image: gitea.cocointhe.cloud/coco/fetchcast:v0.1.1
               volumeMounts:
                 - mountPath: "/downloads"
                   name: downloads

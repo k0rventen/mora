@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: fetchcast
+spec:
+  schedule: "0 23 * * *"
+  timeZone: "Europe/Paris"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          volumes:
+            - name: downloads
+              persistentVolumeClaim:
+                claimName: jellyfin-music
+          containers:
+            - name: fetchcast
+              image: gitea.cocointhe.cloud/coco/fetchcast:v0.1.0
+              volumeMounts:
+                - mountPath: "/downloads"
+                  name: downloads
+          restartPolicy: Never

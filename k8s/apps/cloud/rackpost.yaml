@@ -16,7 +16,7 @@ spec:
   values:
     apps:
       - name: rackpost
-        image: gitea.cocointhe.cloud/coco/rackpost:v0.2.3
+        image: gitea.cocointhe.cloud/coco/rackpost:v0.2.4
         volumeMounts:
           - name: rackpost-data
             mountPath: /data
@@ -34,3 +34,26 @@ spec:
           public: true
         pvc:
           - rackpost-data
+---
+# rackpost -> webpushservices like mozilla, apple & google
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-rackpost-push-services
+spec:
+  podSelector:
+    matchLabels:
+      app: rackpost
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+              - 192.168.0.0/16
+      ports:
+        - protocol: TCP
+          port: 443

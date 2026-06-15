@@ -11,10 +11,10 @@ spec:
     spec:
       template:
         spec:
-          volumes:
-          - name: renovate-cache
-            persistentVolumeClaim:
-              claimName: renovate-cache
+          # volumes:
+          #   - name: renovate-cache
+          #     persistentVolumeClaim:
+          #       claimName: renovate-cache
           containers:
             - name: renovate
               image: renovate/renovate:43.207.3@sha256:af0ea0750c46eda2f2af916d2a32228d699f1d69027f1396d4f8bbcb1497e818
@@ -23,9 +23,9 @@ spec:
               envFrom:
                 - secretRef:
                     name: renovate-env
-              volumeMounts:
-              - mountPath: "/tmp/renovate"
-                name: renovate-cache
+              # volumeMounts:
+              # - mountPath: "/tmp/renovate"
+              #   name: renovate-cache
           restartPolicy: Never
 
 ---

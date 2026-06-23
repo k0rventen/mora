@@ -24,6 +24,10 @@ spec:
         ingress:
           domain: gitea.cocointhe.cloud
         env:
+          - name: GITEA__server__SSH_DOMAIN
+            value: gitea.cocointhe.cloud
+          - name: GITEA__server__SSH_PORT
+            value: "2222"
           - name: GITEA_RUNNER_REGISTRATION_TOKEN
             valueFrom:
               secretKeyRef:
@@ -74,6 +78,7 @@ spec:
           securityContext:
             privileged: true
 ---
+# fix the dns config of the DinD runner
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -81,3 +86,20 @@ metadata:
 data:
   daemon.json: |
     {"dns": ["192.168.1.10"]}
+---
+# open another tcp port for git ssh access
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: gitea-ssh
+  name: gitea-ssh
+spec:
+  ports:
+    - name: gitea-ssh
+      port: 2222
+      protocol: TCP
+      targetPort: 2222
+  selector:
+    app: gitea
+  type: LoadBalancer

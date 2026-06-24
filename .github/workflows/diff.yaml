@@ -1,7 +1,6 @@
 name: flux-local diff
 on:
-  push:
-    branches-ignore: ["main"]
+  pull_request:
 
 jobs:
   diff:
@@ -63,7 +62,7 @@ jobs:
             -X POST -v \
             -H "Authorization: token ${{ secrets.GITEA_TOKEN }}" \
             -H "Content-Type: application/json" \
-            ${{ github.server_url }}/api/v1/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
+            ${{ github.server_url }}/api/v1/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments \
             --data-raw "$(jq -cn --arg body "${{ steps.diff.outputs.diff }}" '{body: $body}')" \
             | jq -r '.id')
 

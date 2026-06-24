@@ -14,21 +14,50 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+
       - name: Setup Flux CLI
         uses: fluxcd/flux2/action@main
+
       - name: Check for fluxcd updates
         id: update
         run: |
           flux install --export > ./k8s/flux/flux-system/gotk-components.yaml
 
-          VERSION="$(flux -v  | grep -oE [0-9].+)"
+          VERSION="$(flux -v | grep -oE '[0-9].+')"
           echo "flux_version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check for changes
+        id: diff
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create branch and push
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name "gitea-bot"
+          git config user.email "gitea-bot@gitea.com"
+          git checkout -b flux-${{ steps.update.outputs.flux_version }}
+          git add ./k8s/flux/flux-system/gotk-components.yaml
+          git commit -m "chore: update fluxcd to v${{ steps.update.outputs.flux_version }}"
+          git push origin flux-${{ steps.update.outputs.flux_version }}
+
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v8.1.1
-        with:
-          branch: flux-${{ steps.update.outputs.flux_version }}
-          commit-message: "chore: update fluxcd to v${{ steps.update.outputs.flux_version }}"
-          title: Update flux to v${{ steps.update.outputs.flux_version }}
-          body: |
-            release: https://github.com/fluxcd/flux2/releases/tag/v${{ steps.update.outputs.flux_version }}
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          set -euo pipefail
+          curl -fsSL \
+            -X POST \
+            -H "Authorization: token ${{ secrets.GITEA_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            ${{ github.server_url }}/api/v1/repos/${{ github.repository }}/pulls \
+            --data-raw "$(jq -cn \
+              --arg title "Update flux to v${{ steps.update.outputs.flux_version }}" \
+              --arg head "flux-${{ steps.update.outputs.flux_version }}" \
+              --arg base "${{ github.ref_name }}" \
+              --arg body "release: https://github.com/fluxcd/flux2/releases/tag/v${{ steps.update.outputs.flux_version }}" \
+              '{title: $title, head: $head, base: $base, body: $body}')"

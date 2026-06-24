@@ -12,9 +12,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
-      - name: Setup Flux CLI
-        uses: fluxcd/flux2/action@v2.2.2
-      - uses: allenporter/flux-local/action/test@4.3.1
-        with:
-          path: k8s/flux/
-          enable-helm: true
+      - name: test diff
+        run: |
+          flux-local test --enable-helm --path k8s/flux/ -v

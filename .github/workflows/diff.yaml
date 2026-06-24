@@ -24,10 +24,10 @@ jobs:
 
       - name: Run flux-local ks diff
         run: |
-          flux-local diff ks
-            --path /workspace/${{github.repository}}/pr/k8s/flux
-            --path-orig /workspace/${{github.repository}}/main/k8s/flux
-            --all-namespaces
+          flux-local diff ks \
+            --path /workspace/${{github.repository}}/pr/k8s/flux \
+            --path-orig /workspace/${{github.repository}}/main/k8s/flux \
+            --all-namespaces \
             --output-file ks.diff
       - name: Run flux-local hr diff
         run: |

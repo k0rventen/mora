@@ -1,6 +1,4 @@
 name: flux-local diff
-permissions:
-  contents: read
 on:
   push:
     branches-ignore: ["main"]
@@ -10,7 +8,7 @@ jobs:
     name: flux diff
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: write
+      issues: write
     steps:
       - name: Checkout main
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
@@ -58,21 +56,15 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Post comment
-        env:
-          GITEA_URL: ${{ github.server_url }}
-          TOKEN: ${{ secrets.COMMENT_TOKEN }}
-          REPO: ${{ github.repository }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          MESSAGE: ${{ steps.diff.outputs.diff }}
         run: |
           set -euo pipefail
-
+          echo ${{ github.server_url }}
           COMMENT_ID=$(curl -fsSL \
-            -X POST \
-            -H "Authorization: token ${TOKEN}" \
+            -X POST -v \
+            -H "Authorization: token ${{ secrets.GITEA_TOKEN }}" \
             -H "Content-Type: application/json" \
-            "${GITEA_URL%/}/api/v1/repos/${REPO}/issues/${PR_NUMBER}/comments" \
-            --data-raw "$(jq -cn --arg body "$MESSAGE" '{body: $body}')" \
+            ${{ github.server_url }}/api/v1/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
+            --data-raw "$(jq -cn --arg body "${{ steps.diff.outputs.diff }}" '{body: $body}')" \
             | jq -r '.id')
 
           echo "Posted comment ID: ${COMMENT_ID}"

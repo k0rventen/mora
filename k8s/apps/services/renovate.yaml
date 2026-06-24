@@ -19,7 +19,7 @@ spec:
             - name: renovate
               image: renovate/renovate:43.207.3@sha256:af0ea0750c46eda2f2af916d2a32228d699f1d69027f1396d4f8bbcb1497e818
               args:
-                - k0rventen/cluster
+                - coco/cluster
               envFrom:
                 - secretRef:
                     name: renovate-env

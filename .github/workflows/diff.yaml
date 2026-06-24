@@ -57,9 +57,22 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Comment on PR
-        uses: /workspace/${{github.repository}}/pr/.github/actions/gitea-add-pr-comment
-        with:
-          token: ${{ secrets.COMMENT_TOKEN }}
-          message: |
-            ${{ steps.diff.outputs.diff }}
+      - name: Post comment
+        env:
+          GITEA_URL: ${{ github.server_url }}
+          TOKEN: ${{ secrets.COMMENT_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          MESSAGE: ${{ steps.diff.outputs.diff }}
+        run: |
+          set -euo pipefail
+
+          COMMENT_ID=$(curl -fsSL \
+            -X POST \
+            -H "Authorization: token ${TOKEN}" \
+            -H "Content-Type: application/json" \
+            "${GITEA_URL%/}/api/v1/repos/${REPO}/issues/${PR_NUMBER}/comments" \
+            --data-raw "$(jq -cn --arg body "$MESSAGE" '{body: $body}')" \
+            | jq -r '.id')
+
+          echo "Posted comment ID: ${COMMENT_ID}"

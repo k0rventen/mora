@@ -57,6 +57,9 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Add Comment
-        run: |
-          echo ${{ steps.diff.outputs.diff }}
+      - name: Comment on PR
+        uses: /workspace/${{github.repository}}/pr/.github/actions/gitea-add-pr-comment
+        with:
+          token: ${{ secrets.COMMENT_TOKEN }}
+          message: |
+            ${{ steps.diff.outputs.diff }}

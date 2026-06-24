@@ -58,7 +58,7 @@ jobs:
       - name: Post comment
         run: |
           set -euo pipefail
-          echo ${{ github.server_url }}
+          echo ${{ github.event }}
           COMMENT_ID=$(curl -fsSL \
             -X POST -v \
             -H "Authorization: token ${{ secrets.GITEA_TOKEN }}" \

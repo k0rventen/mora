@@ -7,7 +7,7 @@ spec:
   interval: 24h
   url: https://traefik.github.io/charts
 ---
-# LAN traefik for all services 
+# LAN traefik for all services
 # is default ingressclass
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -20,7 +20,7 @@ spec:
   chart:
     spec:
       chart: traefik
-      version: "40.3.0"
+      version: "41.0.0"
       sourceRef:
         kind: HelmRepository
         name: traefik
@@ -35,11 +35,6 @@ spec:
     global:
       checkNewVersion: false
       sendAnonymousUsage: false
-    # experimental:
-    #   plugins:
-    #     oidc:
-    #       moduleName: github.com/lukaszraczylo/traefikoidc
-    #       version: v0.8.21
     tlsStore:
       default:
         certificates:
@@ -67,18 +62,17 @@ spec:
               to: websecure
               scheme: https
               permanent: true
-    logs:
-      general:
-        format: "json"
-        level: "WARN"
-      access:
-        enabled: true
-        format: "json"
-        fields:
-          headers:
-            defaultmode: drop
-            names:
-              User-Agent: keep
+    log:
+      format: "json"
+      level: "WARN"
+    accessLog:
+      enabled: true
+      format: "json"
+      fields:
+        headers:
+          defaultmode: drop
+          names:
+            User-Agent: keep
 
 ---
 # specific traefik for routing traffic from WAN
@@ -94,7 +88,7 @@ spec:
   chart:
     spec:
       chart: traefik
-      version: "40.3.0"
+      version: "41.0.0"
       sourceRef:
         kind: HelmRepository
         name: traefik
@@ -120,7 +114,6 @@ spec:
       enabled: true
       isDefaultClass: false
       name: "traefik-tunnel"
- 
     tlsStore:
       default:
         certificates:
@@ -142,23 +135,22 @@ spec:
       websecure:
         http:
           middlewares:
-          - ingress-geoblock@kubernetescrd
-          - ingress-errors@kubernetescrd 
-          - ingress-modsec@kubernetescrd
+            - ingress-geoblock@kubernetescrd
+            - ingress-errors@kubernetescrd
+            - ingress-modsec@kubernetescrd
         forwardedHeaders:
           trustedIPs: ["10.0.0.0/8"]
         proxyProtocol:
           trustedIPs: ["10.0.0.0/8"]
-    logs:
-      general:
-        format: "json"
-        level: "WARN"
-      access:
-        enabled: true
-        format: "json"
-        fields:
-          headers:
-            defaultmode: drop
-            names:
-              User-Agent: keep
-              X-Ipcountry: keep
+    log:
+      format: "json"
+      level: "WARN"
+    accessLog:
+      enabled: true
+      format: "json"
+      fields:
+        headers:
+          defaultmode: drop
+          names:
+            User-Agent: keep
+            X-Ipcountry: keep

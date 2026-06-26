@@ -1,0 +1,88 @@
+# the highlights all possible values for the chart
+# the smallest possible example would be to set name and image.
+
+# the chart will iter on apps
+apps:
+  # name for the deployment and pods
+  - name: busy
+
+    # image
+    image: busybox@sha256:37f7b378a29ceb4c551b1b5582e27747b855bbfaa73fa11914fe0df028dc581f
+
+    # use this key to configure the deployment spec
+    deploymentSpec:
+      strategy:
+        type: Recreate
+
+    # container resources
+    resources:
+      limits:
+        cpu: 100m
+        memory: 100Mi
+
+    # env vars
+    env:
+      - name: key
+        value: val
+
+    # classic volume definition
+    volumeMounts:
+      - name: config
+        mountPath: /etc/app
+      - name: data
+        mountPath: /data
+    volumes:
+      - name: config
+        configMap:
+          name: conf
+      - name: data
+        persistentVolumeClaim:
+          claimName: data
+
+    # extra spec for the pod
+    podSpec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: topology.kubernetes.io/zone
+                    operator: In
+                    values:
+                      - antarctica-east1
+
+    # extras spec for the container
+    containerSpec:
+      envFrom:
+        - secretRef:
+            name: test-secret
+
+    # create a svc on that target port (svc wil lhave the same port)
+    service: 8080
+
+    # enable an anubis sidecar for scraper protection (will proxy the traffic through an anubis container)
+    anubis: true
+
+    # will create a pvc w/ this name
+    pvc:
+      - data
+
+    # in case of a private registry
+    imagePullSecret: secret
+
+    # create the appropriate ingress
+    # public: true means a second ingress using the public ingressClass
+    ingress:
+      public: true # default to false
+      geoblock: false # default true, false disable geoblocking
+      domain: app.domain.com # for the host and tls
+
+# shortcuts for creating simple configmaps (like non sensitive static files to mount)
+configmaps:
+  webserver-config:
+    Caddyfile: |
+      :80 {
+          root * /html
+          file_server
+          try_files {path} /index.html
+      }

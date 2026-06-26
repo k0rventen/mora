@@ -1,0 +1,4 @@
+# these values are for my cluster
+privateIngressClass: traefik
+publicIngressClass: traefik-tunnel
+storageClass: nfs-csi

@@ -55,15 +55,16 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Post comment
+        env:
+          BODY: ${{ steps.diff.outputs.diff }}
         run: |
-          set -euo pipefail
-          echo ${{ github.event }}
+          set -xeuo pipefail
           COMMENT_ID=$(curl -fsSL \
             -X POST -v \
             -H "Authorization: token ${{ secrets.GITEA_TOKEN }}" \
             -H "Content-Type: application/json" \
             ${{ github.server_url }}/api/v1/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments \
-            --data-raw "$(jq -cn --arg body "${{ steps.diff.outputs.diff }}" '{body: $body}')" \
+            --data-raw "$(jq -cn --arg body "$BODY" '{body: $body}')" \
             | jq -r '.id')
 
           echo "Posted comment ID: ${COMMENT_ID}"

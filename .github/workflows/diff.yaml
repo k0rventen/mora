@@ -16,9 +16,6 @@ jobs:
 
       - name: Run flux-local ks diff
         run: |
-          pwd
-          ls -alh
-          git status
           flux-local diff ks --branch-orig main -A --path k8s/flux/ --output-file ks.diff
           flux-local diff hr --branch-orig main -A --path k8s/flux/ --output-file hr.diff
 

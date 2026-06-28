@@ -9,30 +9,16 @@ jobs:
     permissions:
       issues: write
     steps:
-      - name: Checkout main
+      - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
         with:
-          ref: "${{ github.event.repository.default_branch }}"
-          path: main
-      - name: Checkout PR
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
-        with:
-          path: pr
+          fetch-depth: 0
 
       - name: Run flux-local ks diff
         run: |
-          flux-local diff ks \
-            --path /workspace/${{github.repository}}/pr/k8s/flux \
-            --path-orig /workspace/${{github.repository}}/main/k8s/flux \
-            --all-namespaces \
-            --output-file ks.diff
-      - name: Run flux-local hr diff
-        run: |
-          flux-local diff hr \
-            --path /workspace/${{github.repository}}/pr/k8s/flux \
-            --path-orig /workspace/${{github.repository}}/main/k8s/flux \
-            --all-namespaces \
-            --output-file hr.diff
+          flux-local diff ks --branch-orig main -A --path k8s/flux/ --output-file ks.diff
+          flux-local diff hr --branch-orig main -A --path k8s/flux/ --output-file hr.diff
+
       - name: diff
         id: diff
         run: |
@@ -55,15 +41,16 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Post comment
+        env:
+          BODY: ${{ steps.diff.outputs.diff }}
         run: |
-          set -euo pipefail
-          echo ${{ github.event }}
+          set -xeuo pipefail
           COMMENT_ID=$(curl -fsSL \
             -X POST -v \
             -H "Authorization: token ${{ secrets.GITEA_TOKEN }}" \
             -H "Content-Type: application/json" \
             ${{ github.server_url }}/api/v1/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments \
-            --data-raw "$(jq -cn --arg body "${{ steps.diff.outputs.diff }}" '{body: $body}')" \
+            --data-raw "$(jq -cn --arg body "$BODY" '{body: $body}')" \
             | jq -r '.id')
 
           echo "Posted comment ID: ${COMMENT_ID}"

@@ -6,7 +6,7 @@ spec:
   interval: 24h
   chart:
     spec:
-      chart: ./appchart/charts/appchart
+      chart: ./appchart
       version: "x.x.x"
       sourceRef:
         kind: GitRepository

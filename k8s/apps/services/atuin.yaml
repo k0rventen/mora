@@ -8,13 +8,13 @@ spec:
   interval: 1h
   chart:
     spec:
-      chart: appchart
-      version: "1.8.0"
+      chart: ./appchart
+      version: "x.x.x"
       sourceRef:
-        kind: HelmRepository
-        name: appchart
+        kind: GitRepository
+        name: flux-system
         namespace: flux-system
-      interval: 10m
+      interval: 1h
   values:
     apps:
       - name: atuin-server
@@ -70,7 +70,10 @@ spec:
               exec:
                 # This ensures graceful shutdown see: https://stackoverflow.com/a/75829325/3437018
                 # Potentially consider using a `StatefulSet` instead of a `Deployment`
-                command: ["/usr/local/bin/pg_ctl stop -D /var/lib/postgresql/data -w -t 60 -m fast"]
+                command:
+                  [
+                    "/usr/local/bin/pg_ctl stop -D /var/lib/postgresql/data -w -t 60 -m fast",
+                  ]
         env:
           - name: POSTGRES_DB
             value: atuin

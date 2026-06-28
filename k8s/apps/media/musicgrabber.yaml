@@ -16,7 +16,7 @@ spec:
   values:
     apps:
       - name: musicgrabber
-        image: g33kphr33k/musicgrabber:2.9.4@sha256:67a8bb7badd03f0ccdfcaaf587247afa96e3ed7235280d2a4e1257d3175baca2
+        image: g33kphr33k/musicgrabber:2.9.5@sha256:ea0151b1ce8ea0461ff441038c76a0ba64ba1c95149746cac875252b03ae1f7d
         env:
         - name: MUSIC_DIR
           value: "/downloads/music" 

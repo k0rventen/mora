@@ -16,5 +16,5 @@ spec:
   values:
     apps:
       - name: pool-counter
-        image: gitea.cocointhe.cloud/coco/pool-count:latest
+        image: gitea.cocointhe.cloud/coco/pool-count:v0.1.0
         service: 8000

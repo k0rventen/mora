@@ -1,16 +1,14 @@
 apiVersion: v1
 stringData:
   RESTIC_PASSWORD: ENC[AES256_GCM,data:+ZtL7InClRynoS8=,iv:kQPTo/Y55JU0sanzKf9ICk+oM9eskjYIAkgLYIvZBCw=,tag:j6b2IQvH0YCSXVezkMlcaQ==,type:str]
-  RESTIC_REMOTE_REPO: ENC[AES256_GCM,data:q2SfrDqkfnGOq6UwdStytFzLo2BlaWU/WWUG3H+xuoP5o/qjln3B9PJnl6xuKcQIYomxog9KC/up+9JmKi4X2qzZ,iv:7eT+05oFKKk3IX1Z0OHt2nKRLIM9ZJZ6fVtPtBB/lLI=,tag:3cHVrjh9s3nj93uOuXJl5w==,type:str]
+  RESTIC_REMOTE_REPO: ENC[AES256_GCM,data:KAt+zwgJyH4RqD01WVMH2g9fiOK5xC76Vwif0cK2TmJKu71TUQuaGnRRow7XVRvdELL1XwYb9UbCCKKjmd1fKeUZTZw2,iv:GfTbOFlQVBveCsNbqwlWYVYfRBkvvUokCXI+xQ9rkt0=,tag:9tbe0y4IpiO1AUxPGg8oJg==,type:str]
   RESTIC_LOCAL_REPO: ENC[AES256_GCM,data:FFNirb6jfA2N5cP6pyen/+QSGip/Xqc=,iv:BWI6bqEHoJ/Pergo1LrTA3XS/LdANx7Vfq4+fD8nUQA=,tag:01N9ez7L/DawqM1wZBoJLQ==,type:str]
-  DISCORD_WEBHOOK: ENC[AES256_GCM,data:s/keIQ2WxKw2HW8ftdY3me6/bHTadiN9c+1nPYb89v8LdE80QYtCFNodjXRAHG5UTMZXhB7uS+63HaJ5H3o8tUDX4F8wIyjHWga0TcD6vCl2+pE83BuvseEDw1VOXKPKFwgs1La+OQS3wdjXs4iGtk7jPrfivu5o0w==,iv:gcjorIuBh2p5NXtVthfTiue3+kmF6x0EUzsuoANhzpQ=,tag:SEh0zJ7GjDN0gWZH9WsoQw==,type:str]
 kind: Secret
 metadata:
   name: restic-config
 sops:
   age:
-    - recipient: age16xc3m2q69s2le4hah3pcne50qn6mljhgc9mxekskwf0mp8fc0vaq5q5dz2
-      enc: |
+    - enc: |
         -----BEGIN AGE ENCRYPTED FILE-----
         YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBaV3dQdC9rcVc0NVhMRFk1
         Z0xzUklRU3g4K1l1Tm1BQjM1Z1JnOTF1VGxzCmNuRVZ2aExMbjFSb3lqOCtGa3FH
@@ -18,10 +16,11 @@ sops:
         YjlhRTM2M0VWeFZyakd5dFB2aDJrWDQKTIZ6jMr1quBxYtOHtfxEBn7IYO1tifSE
         abpody3bnhWBbUMkrU+R2mreLI/LogopnVGvcBrhnjn+9LyTy0GwHg==
         -----END AGE ENCRYPTED FILE-----
-  lastmodified: "2026-05-01T20:31:15Z"
-  mac: ENC[AES256_GCM,data:HAk70s8JPc8kEZrRJGKN5d6d4KxkRGXEwPizpCK6t7NxCniyuCCh0Smc6dq/js4m5P7IDoyCGOlH2XkPvDz6/cveQ6efzirEuLmpTix9OV2WfajdEtqe4f9UdLP9JuGlj3AYhZH1IgXV+BVVjtRHzYaJrjO5r9eN4ifqGnrN0t4=,iv:T4H0ELPJBnks8I4PoVXichJjRIM8n415UbzpyPdtbI4=,tag:HOdxNN+DdFFCp0aQjojl0g==,type:str]
+      recipient: age16xc3m2q69s2le4hah3pcne50qn6mljhgc9mxekskwf0mp8fc0vaq5q5dz2
   encrypted_regex: (token|email|^data$|^stringData$|webhook$|creds$)
-  version: 3.12.2
+  lastmodified: "2026-07-04T20:48:31Z"
+  mac: ENC[AES256_GCM,data:u4yQhavPC8VdnoNjimNzyi/QBVtrQb5+7rWUnaC7LUgNBh7ca22AgB2JMw2T0TIY5YOyytUm6Y4ggbuDA72D4wtNLjsmo934FCl3Rf8ydOqfV6skstETI8l8le9BiTDkCXlGvblYJ2WdJ0LDGnnykzQok2rq49oZxotgUq7zFJ0=,iv:iCCq0BzHRDiDcIgEyHKcjZnOY27BKklvX8Atn4IveNA=,tag:cce/LR79a4lgJBsOJEpDeA==,type:str]
+  version: 3.13.2
 ---
 apiVersion: v1
 data:
@@ -31,8 +30,7 @@ metadata:
   name: sshkey
 sops:
   age:
-    - recipient: age16xc3m2q69s2le4hah3pcne50qn6mljhgc9mxekskwf0mp8fc0vaq5q5dz2
-      enc: |
+    - enc: |
         -----BEGIN AGE ENCRYPTED FILE-----
         YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBaV3dQdC9rcVc0NVhMRFk1
         Z0xzUklRU3g4K1l1Tm1BQjM1Z1JnOTF1VGxzCmNuRVZ2aExMbjFSb3lqOCtGa3FH
@@ -40,7 +38,8 @@ sops:
         YjlhRTM2M0VWeFZyakd5dFB2aDJrWDQKTIZ6jMr1quBxYtOHtfxEBn7IYO1tifSE
         abpody3bnhWBbUMkrU+R2mreLI/LogopnVGvcBrhnjn+9LyTy0GwHg==
         -----END AGE ENCRYPTED FILE-----
-  lastmodified: "2026-05-01T20:31:15Z"
-  mac: ENC[AES256_GCM,data:HAk70s8JPc8kEZrRJGKN5d6d4KxkRGXEwPizpCK6t7NxCniyuCCh0Smc6dq/js4m5P7IDoyCGOlH2XkPvDz6/cveQ6efzirEuLmpTix9OV2WfajdEtqe4f9UdLP9JuGlj3AYhZH1IgXV+BVVjtRHzYaJrjO5r9eN4ifqGnrN0t4=,iv:T4H0ELPJBnks8I4PoVXichJjRIM8n415UbzpyPdtbI4=,tag:HOdxNN+DdFFCp0aQjojl0g==,type:str]
+      recipient: age16xc3m2q69s2le4hah3pcne50qn6mljhgc9mxekskwf0mp8fc0vaq5q5dz2
   encrypted_regex: (token|email|^data$|^stringData$|webhook$|creds$)
-  version: 3.12.2
+  lastmodified: "2026-07-04T20:48:31Z"
+  mac: ENC[AES256_GCM,data:u4yQhavPC8VdnoNjimNzyi/QBVtrQb5+7rWUnaC7LUgNBh7ca22AgB2JMw2T0TIY5YOyytUm6Y4ggbuDA72D4wtNLjsmo934FCl3Rf8ydOqfV6skstETI8l8le9BiTDkCXlGvblYJ2WdJ0LDGnnykzQok2rq49oZxotgUq7zFJ0=,iv:iCCq0BzHRDiDcIgEyHKcjZnOY27BKklvX8Atn4IveNA=,tag:cce/LR79a4lgJBsOJEpDeA==,type:str]
+  version: 3.13.2

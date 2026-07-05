@@ -6,11 +6,11 @@ spec:
   interval: 10m
   chart:
     spec:
-      chart: appchart
-      version: "1.8.0"
+      chart: ./appchart
+      version: "x.x.x"
       sourceRef:
-        kind: HelmRepository
-        name: appchart
+        kind: GitRepository
+        name: flux-system
         namespace: flux-system
       interval: 10m
   values:
@@ -18,23 +18,23 @@ spec:
       - name: musicgrabber
         image: g33kphr33k/musicgrabber:2.9.5@sha256:ea0151b1ce8ea0461ff441038c76a0ba64ba1c95149746cac875252b03ae1f7d
         env:
-        - name: MUSIC_DIR
-          value: "/downloads/music" 
-        - name: LISTEN_ADDR
-          value: 0.0.0.0
-        - name: ENABLE_MUSICBRAINZ
-          value: "true"
-        - name: DEFAULT_CONVERT_TO_FLAC
-          value: "true"
-        - name: DB_PATH
-          value: /data/music_grabber.db
-        - name: JELLYFIN_URL
-          value: http://jellyfin:8096
-        - name: JELLYFIN_API_KEY
-          value: 62f595a2d8504077b04a8171d5c17cc4
+          - name: MUSIC_DIR
+            value: "/downloads/music"
+          - name: LISTEN_ADDR
+            value: 0.0.0.0
+          - name: ENABLE_MUSICBRAINZ
+            value: "true"
+          - name: DEFAULT_CONVERT_TO_FLAC
+            value: "true"
+          - name: DB_PATH
+            value: /data/music_grabber.db
+          - name: JELLYFIN_URL
+            value: http://jellyfin:8096
+          - name: JELLYFIN_API_KEY
+            value: 62f595a2d8504077b04a8171d5c17cc4
 
         pvc:
-        - musicgrabber-config
+          - musicgrabber-config
         service: 8080
         ingress:
           domain: grab.cocointhe.cloud

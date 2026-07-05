@@ -6,13 +6,13 @@ spec:
   interval: 24h
   chart:
     spec:
-      chart: appchart
-      version: "1.8.0"
+      chart: ./appchart
+      version: "x.x.x"
       sourceRef:
-        kind: HelmRepository
-        name: appchart
+        kind: GitRepository
+        name: flux-system
         namespace: flux-system
-      interval: 1h
+      interval: 10m
   values:
     apps:
       - name: glance
@@ -91,7 +91,6 @@ spec:
                       - UCR-DXc1voovS8nhAvccRZhg # JG
 
 ---
-
 # glance -> web for news fetching
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -102,12 +101,12 @@ spec:
     matchLabels:
       app: glance
   policyTypes:
-  - Egress
+    - Egress
   egress:
-  - to:
-    - ipBlock:
-        cidr: 0.0.0.0/0
-        except:
-        - 10.0.0.0/8
-        - 172.16.0.0/12
-        - 192.168.0.0/16
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+              - 192.168.0.0/16

@@ -6,11 +6,11 @@ spec:
   interval: 10m
   chart:
     spec:
-      chart: appchart
-      version: "1.8.0"
+      chart: ./appchart
+      version: "x.x.x"
       sourceRef:
-        kind: HelmRepository
-        name: appchart
+        kind: GitRepository
+        name: flux-system
         namespace: flux-system
       interval: 10m
   values:
@@ -18,8 +18,8 @@ spec:
       - name: memos
         image: ghcr.io/usememos/memos:0.29.1@sha256:3e1253477066eb2aefa91145f7f9038bb931ed88c8a3ee05310a933594cdba7d
         env:
-        - name: MEMOS_PORT
-          value: "8081"
+          - name: MEMOS_PORT
+            value: "8081"
         volumeMounts:
           - name: memos-data
             mountPath: /var/opt/memos

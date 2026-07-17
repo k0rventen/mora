@@ -16,7 +16,7 @@ spec:
   values:
     apps:
       - name: beem-exporter
-        image: gitea.cocointhe.cloud/coco/beem-exporter:v0.2.1
+        image: gitea.cocointhe.cloud/coco/beem-exporter:v0.2.1@sha256:20de2dfbbe49b9703c5ee89a5985502440b41ca42544fcfa28499be9c3da8e59
         service: 8000
         env:
           - name: EMAIL

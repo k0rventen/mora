@@ -16,5 +16,5 @@ spec:
   values:
     apps:
       - name: bbox-exporter
-        image: gitea.cocointhe.cloud/coco/bbox:v0.1.0
+        image: gitea.cocointhe.cloud/coco/bbox:v0.1.0@sha256:b9bca9fbe7f387b21e505272be92cb1bd26cd0ee0774df97a0066bd6e008c239
         service: 8000

@@ -1,52 +1,54 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
 metadata:
   name: adguard
 spec:
-  selector:
-    matchLabels:
-      app: adguard
-  template:
-    metadata:
-      labels:
-        app: adguard
+  interval: 1h
+  chart:
     spec:
-      hostNetwork: true # for the dhcp server
-      containers:
-        - name: adguard
-          image: adguard/adguardhome:v0.107.78@sha256:1ea34eafe5dc691007946e8eaab7bf46b0de9412f39213d8c06e48b53bf9a6c5
-          volumeMounts:
-            - mountPath: "/opt/adguardhome/conf"
-              name: adguard-data
-            - mountPath: "/opt/adguardhome/work"
-              name: adguard-data
+      chart: ./appchart
+      version: "x.x.x"
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 1h
+  values:
+    apps:
+      - name: adguard
+        image: adguard/adguardhome:v0.107.78@sha256:1ea34eafe5dc691007946e8eaab7bf46b0de9412f39213d8c06e48b53bf9a6c5
+        deploymentSpec:
+          hostNetwork: true # for the dhcp server
+          strategy:
+            type: RollingUpdate
+            rollingUpdate:
+              maxUnavailable: 0
+              maxSurge: 1
+        containerSpec:
           livenessProbe:
             exec:
               command:
                 - nslookup
                 - cocointhe.cloud
-                - 192.168.1.10
-            initialDelaySeconds: 10
-            periodSeconds: 2
+                - 127.0.0.1
+            initialDelaySeconds: 20
+            periodSeconds: 5
             failureThreshold: 4
-      volumes:
+        volumes:
         - name: adguard-data
           persistentVolumeClaim:
             claimName: adguard-data
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: adguard-data
-spec:
-  resources:
-    requests:
-      storage: 100Mi
-  volumeMode: Filesystem
-  accessModes:
-    - ReadWriteOnce
----
+        volumeMounts:
+        - mountPath: "/opt/adguardhome/conf"
+          name: adguard-data
+        - mountPath: "/opt/adguardhome/work"
+          name: adguard-data
+        pvc:
+          - adguard-data
+        service: 42080
+        ingress:
+          domain: adguard.cocointhe.cloud
+--- # loadbalancer service for DNS queries
 apiVersion: v1
 kind: Service
 metadata:
@@ -61,38 +63,3 @@ spec:
   selector:
     app: adguard
   type: LoadBalancer
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: adguard
-spec:
-  ports:
-  - name: http
-    port: 42080
-    protocol: TCP
-    targetPort: 42080
-  selector:
-    app: adguard
-  type: ClusterIP
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: adguard
-spec:
-  ingressClassName: traefik
-  rules:
-  - host: adguard.cocointhe.cloud
-    http:
-      paths:
-      - backend:
-          service:
-            name: adguard
-            port:
-              number: 42080
-        path: /
-        pathType: Prefix
-  tls:
-  - hosts:
-    - adguard.cocointhe.cloud

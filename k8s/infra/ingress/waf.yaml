@@ -6,11 +6,11 @@ spec:
   interval: 24h
   chart:
     spec:
-      chart: appchart
-      version: 1.8.0
+      chart: ./appchart
+      version: "x.x.x"
       sourceRef:
-        kind: HelmRepository
-        name: appchart
+        kind: GitRepository
+        name: flux-system
         namespace: flux-system
       interval: 1h
   values:
@@ -32,20 +32,3 @@ spec:
           value: "5"
         - name: BACKEND
           value: "http://dummy"
-        volumeMounts:
-          - name: rulesets
-            mountPath: /etc/modsecurity.d/owasp-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
-            subPath: REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
-        volumes:
-          - name: rulesets
-            configMap:
-              name: waf-rulesets
-    configmaps:
-      waf-rulesets:
-        REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf: |
-          SecRule REQUEST_HEADERS:Referer "@beginsWith https://haven.cocointhe.cloud" \
-              "id:1003,\
-              phase:1,\
-              pass,\
-              nolog,\
-              ctl:ruleEngine=Off"

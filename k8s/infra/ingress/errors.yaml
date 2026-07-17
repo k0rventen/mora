@@ -2,8 +2,26 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: wildcard-fallback
-  # labels:
-  #   cocointhe.cloud/geoblock-disabled: ""
+  annotations:
+    traefik.ingress.kubernetes.io/router.priority: "1"
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: "*.cocointhe.cloud"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: errors
+                port:
+                  number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wildcard-fallback-tunnel
   annotations:
     traefik.ingress.kubernetes.io/router.priority: "1"
 spec:

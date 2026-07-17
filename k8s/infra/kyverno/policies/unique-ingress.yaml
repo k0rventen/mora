@@ -25,7 +25,7 @@ spec:
         - name: existing_ingresses
           apiCall:
             urlPath: "/apis/networking.k8s.io/v1/ingresses"
-            jmesPath: "items[?metadata.name != 'wildcard-fallback' && spec.ingressClassName == '{{request.object.spec.ingressClassName}}'].spec.rules[].host"
+            jmesPath: "items[?metadata.name != 'wildcard-fallback' && ?metadata.name != 'wildcard-fallback-tunnel' && spec.ingressClassName == '{{request.object.spec.ingressClassName}}'].spec.rules[].host"
       preconditions:
         all:
           - key: "{{ request.operation }}"

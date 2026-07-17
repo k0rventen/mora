@@ -4,7 +4,7 @@
 
 ![logo](./resources/logo.png)
 
-<h1>lampone</h1>
+<h1>cluster</h1>
 
 My self hosted cloud, available at [cocointhe.cloud](https://cocointhe.cloud).
 
@@ -43,8 +43,7 @@ In `k8s/` there are 3 main folders:
 - `flux`, the entrypoint used by the flux controller for synchronizing the cluster. Main 'apps' are declared here.
   The interval for the source GitRepo is set to `1m`, so changes will be picked up within a minute or so.
 - `infra` represents what's needed for the cluster to function:
-  - a [nfs-server](https://github.com/k0rventen/docker-nfs-server) + [csi-nfs-driver](https://github.com/kubernetes-csi/csi-driver-nfs) for handling most persistent volumes (using the 1To SSD on the master)
-  - [longhorn](https://github.com/longhorn/longhorn) for high-performance, hyperconverged storage (using the flash drive on each node)
+  - a [Local Path Provisioner](https://github.com/rancher/local-path-provisioner) for handling persistent storage
   - an IngressController with [Traefik](https://github.com/traefik/traefik), one private (listens on local lan), one "public",
   - [cert-manager](https://github.com/cert-manager/cert-manager) for certificates management of my domain,
   - [kube-vip](https://github.com/kube-vip/kube-vip) for managing the cluster's VIP.  
@@ -52,7 +51,6 @@ In `k8s/` there are 3 main folders:
   - [tailscale-operator](https://github.com/tailscale/tailscale/tree/main/cmd/k8s-operator/deploy) for accessing my private services from wherever (using a subnet route) and for my cluster services to access my offsite backup server
   - [system-upgrade-controller](https://github.com/rancher/system-upgrade-controller) for managing k8s upgrades directly in the cluster using CRDs.
   - a [renovate](https://github.com/renovatebot/renovate) cronjob to create PR for components updates (w/ auto merging when it's a patch level update and other rules)
-  #- [velero](https://velero.io/docs/v1.17/) + [garage](https://garagehq.deuxfleurs.fr/) for daily, local backups of the cluster (if an app fails and borks its files).
   - a [restic](https://github.com/restic/restic) cronjob that create a remote backup of the whole nfs dir (in case the server catches on fire) for DR situation,
   - [kyverno](https://kyverno.io/) for enforcing policies in the cluster,
   - [goldilocks](https://github.com/FairwindsOps/goldilocks) for automatic adjustments of limits/requests,
@@ -68,15 +66,13 @@ In `k8s/` there are 3 main folders:
   - [vaultwarden](https://github.com/dani-garcia/vaultwarden) as my passwords manager
   - [filebrowser](https://github.com/gtsteffaniak/filebrowser) for file sharing
   - [glance](https://github.com/glanceapp/glance) as my internet homepage
-  - [kromgo](https://github.com/kashalls/kromgo) + shields.io for exposing badge-style cluster stats publicly
   - [pocketid](https://github.com/pocket-id/pocket-id) as an OIDC provider
   - [atuin](https://github.com/atuinsh/atuin) for my centralized shell history
   - [uptime kuma](https://github.com/louislam/uptime-kuma) as a simple availability dashboard
   - [n8n](https://github.com/n8n-io/n8n) for basic automation workflows
-  - [bytestash](https://github.com/jordan-dalby/ByteStash) for remembering short code/iaac snippets 
   - [grafana](https://github.com/grafana/grafana) + [prometheus](https://github.com/prometheus/prometheus) + [loki](https://github.com/grafana/loki) for monitoring the cluster
   - [grist](https://github.com/gristlabs/grist-core) for a modern take on spreadsheets
-  - [jellyfin](https://github.com/jellyfin/jellyfin) & friends ([explo](https://github.com/LumePart/Explo), [podfetch](https://github.com/SamTV12345/PodFetch),..)
+  - [jellyfin](https://github.com/jellyfin/jellyfin)
   - and some other stuff like a blog , static sites, etc..
 
 I try to adhere to gitops/automation principles.
@@ -90,7 +86,6 @@ Some things aren't automated but it's mainly toil (one-time-things during setup 
 - [git](https://git-scm.com/): change management
 - [gitleaks](https://github.com/gitleaks/gitleaks): secret detection as a pre-commit hook
 
-
 ```
 # install everything needed
 brew install git ansible fluxcd/tap/flux sops age gitleaks opkssh
@@ -98,10 +93,6 @@ brew install git ansible fluxcd/tap/flux sops age gitleaks opkssh
 # tell git where to find its hooks
 git config core.hooksPath .githooks
 ```
-
-### OS
-
-The 3 rasps are running standard [Raspberry Pi OS Lite 64b](https://www.raspberrypi.com/software/operating-systems/). From there unnecessary packages are removed (dphys-swapfile, avahi-daemon, modemmanager and some others). 
 
 
 ### Creating the cluster
@@ -270,12 +261,22 @@ It's backed up daily onto the same ssd (mainly for rollbacks and potential local
 For disaster-recovery situations, it's also backed up daily onto a HDD offsite, which can be accessed through my tailnet.
 
 #### restic setup
-The backup tool is [restic](https://restic.net/). It's deployed as a cronjob in the cluster. It launches a custom script that runs the local backup as well as the remote one (which requires commands before and after to mount the external disk on the remote side.). Here are the commands used to create the restic repos before deploying the cronjob:
+The backup tool is [restic](https://restic.net/). It's deployed as a cronjob in the cluster. It launches a simple script:
 
-1. local repo
+```bash
+# First restic backup command
+restic backup -e $RESTIC_NFS_PATH -r $RESTIC_NFS_PATH .
+
+# cleanup old backups
+restic -r $RESTIC_NFS_PATH forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12
+
+# remote location backup using rsync incremental backup
+rsync -avz --delete -e "ssh -i sshkey -o StrictHostKeyChecking=off" . $RESTIC_REMOTE_REPO
+```
+
+To create the restic repo:
 
 ```
-cd /nfs
 restic init nfs-backups
 ```
 
@@ -297,10 +298,6 @@ Options=defaults
 WantedBy=multi-user.target
 ```
 
-Init the repo from the nfs server (this assumes passwordless ssh auth):
-```
-restic init -r sftp:<remote_server_ip>:/mnt/backup/nfs-backups
-```
 
 
 ### Traefik WAF + geoblocking

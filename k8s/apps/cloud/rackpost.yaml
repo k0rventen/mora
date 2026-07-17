@@ -16,7 +16,7 @@ spec:
   values:
     apps:
       - name: rackpost
-        image: gitea.cocointhe.cloud/coco/rackpost:v0.2.4
+        image: gitea.cocointhe.cloud/coco/rackpost:v0.2.4@sha256:2339c2116cc9c7cf66524ea774d5bc89003050f6e3a1d967371d64eb9591e1c1
         volumeMounts:
           - name: rackpost-data
             mountPath: /data

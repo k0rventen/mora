@@ -6,11 +6,11 @@ spec:
   interval: 24h
   chart:
     spec:
-      chart: appchart
-      version: 1.8.0
+      chart: ./appchart
+      version: "x.x.x"
       sourceRef:
-        kind: HelmRepository
-        name: appchart
+        kind: GitRepository
+        name: flux-system
         namespace: flux-system
       interval: 1h
   values:

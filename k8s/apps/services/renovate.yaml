@@ -17,7 +17,7 @@ spec:
           #       claimName: renovate-cache
           containers:
             - name: renovate
-              image: renovate/renovate:43.264.2@sha256:062bec49857f0b23232e09fc9a557b3abf71dd499dbf54c2137a83d9c6320795
+              image: renovate/renovate:43.274.0@sha256:5485fdddee8d281f59babb16c2b3e408496019f38dd210ed4414c398e220c9b7
               args:
                 - coco/cluster
               envFrom:

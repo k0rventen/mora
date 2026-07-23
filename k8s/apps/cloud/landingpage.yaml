@@ -1,0 +1,53 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: landingpage
+spec:
+  interval: 24h
+  chart:
+    spec:
+      chart: ./appchart
+      version: "x.x.x"
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 10m
+  values:
+    apps:
+      - name: landingpage
+        image: gitea.cocointhe.cloud/coco/landingpage:v0.2.1
+        service: 5000
+        ingress:
+          public: true
+          domain: cocointhe.cloud
+        env:
+          - name: LLM_API_URL
+            value: http://192.168.1.129:8080/v1/chat/completions
+          - name: DAILY_GENERATION_TIME
+            value: 08:00
+        volumeMounts:
+          - name: landingpage-data
+            mountPath: /app/static
+        volumes:
+          - name: landingpage-data
+            persistentVolumeClaim:
+              claimName: landingpage-data
+        pvc:
+          - landingpage-data
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-landingpage-llamacpp
+spec:
+  podSelector:
+    matchLabels:
+      app: landingpage
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 192.168.1.129/32

@@ -26,6 +26,24 @@ spec:
   - kind: Secret
     name: falcosidekick-config
   values:
+    collectors:
+      containerEngine:
+        engines:
+          docker:
+            enabled: false
+          podman:
+            enabled: false
+          lxc:
+            enabled: false
+          libvirt_lxc:
+            enabled: false
+          bpm:
+            enabled: false
+      kubernetes:
+        enabled: true
+    falcosidekick:
+      enabled: true
+      replicaCount: 1
     customRules:
       disable-false-positives.yaml: |
         - rule: Packet socket created in container
@@ -33,7 +51,7 @@ spec:
       # normal communication to the api server
       allow-kube-vip-apiserver.yaml: |
         - rule: Contact K8S API Server From Container
-          override: 
+          override:
             condition: append
           condition: >
             and not k8s.ns.name in (
@@ -57,10 +75,10 @@ spec:
             ) and not (
               proc.name = "kube-vip"
             )
-      # explo launches a cron for scheduling 
+      # explo launches a cron for scheduling
       allow-explo-crond.yaml: |
         - rule: Drop and execute new binary in container
-          override: 
+          override:
             condition: append
           condition: >
             and not (
@@ -71,7 +89,7 @@ spec:
       # at startup, it seems owasp is doing some templating for the rules
       allow-owasp-shell.yaml: |
         - rule: Run shell untrusted
-          override: 
+          override:
             condition: append
           condition: >
             and not (
@@ -80,7 +98,23 @@ spec:
               container.name = "waf" and
               proc.pname = "nginx"
             )
+      # sshing into the host trigger some sensitive read files
+      allow-ssh-host.yaml: |
+        - rule: Read sensitive file untrusted
+          override:
+            condition: append
+          condition: >
+            and not (
+              container.id = "host"
+            )
 
-    falcosidekick:
-      enabled: true
-      replicaCount: 1
+      # explo is doing some stuff
+      allow-explo-cron.yaml: |
+        - rule: Drop and execute new binary in container
+          override:
+            condition: append
+          condition: >
+            and not (
+              container.name = "explo" and
+              k8s.ns.name = "media"
+            )

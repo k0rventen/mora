@@ -103,7 +103,7 @@ spec:
       plugins:
         geoblock:
           moduleName: "github.com/PascalMinder/geoblock"
-          version: "v0.3.7"
+          version: "v0.3.8"
         modsec:
           moduleName: "github.com/acouvreur/traefik-modsecurity-plugin"
           version: "v1.3.0"

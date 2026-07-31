@@ -24,6 +24,8 @@ spec:
         env:
           - name: LLM_API_URL
             value: http://192.168.1.129:8080/v1/chat/completions
+          - name: RSS_FEEDS
+            value: https://www.phoronix.com/phoronix-rss.php,https://lobste.rs/top/rss,https://hnrss.org/frontpage
         volumeMounts:
           - name: landingpage-data
             mountPath: /app/static

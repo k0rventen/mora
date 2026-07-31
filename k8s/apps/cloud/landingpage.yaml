@@ -16,7 +16,11 @@ spec:
   values:
     apps:
       - name: landingpage
+<<<<<<< Updated upstream
         image: gitea.cocointhe.cloud/coco/landingpage:v0.3.1@sha256:58e0590ebeb0ce4c4c4eb1d07725bc030bc9d0cf3917440551b2654842065c1c
+=======
+        image: gitea.cocointhe.cloud/coco/landingpage:v0.3.1
+>>>>>>> Stashed changes
         service: 5000
         ingress:
           public: true
@@ -24,8 +28,6 @@ spec:
         env:
           - name: LLM_API_URL
             value: http://192.168.1.129:8080/v1/chat/completions
-          - name: DAILY_GENERATION_TIME
-            value: 08:00
         volumeMounts:
           - name: landingpage-data
             mountPath: /app/static
@@ -37,10 +39,11 @@ spec:
           - landingpage-data
 
 ---
+# acess llamacpp host and prometheus
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-landingpage-llamacpp
+  name: allow-landingpage
 spec:
   podSelector:
     matchLabels:
@@ -51,3 +54,8 @@ spec:
     - to:
         - ipBlock:
             cidr: 192.168.1.129/32
+    - to:
+      - namespaceSelector: {}
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/name: prometheus

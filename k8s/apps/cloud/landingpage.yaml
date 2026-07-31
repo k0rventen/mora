@@ -16,11 +16,7 @@ spec:
   values:
     apps:
       - name: landingpage
-<<<<<<< Updated upstream
-        image: gitea.cocointhe.cloud/coco/landingpage:v0.3.1@sha256:58e0590ebeb0ce4c4c4eb1d07725bc030bc9d0cf3917440551b2654842065c1c
-=======
-        image: gitea.cocointhe.cloud/coco/landingpage:v0.3.1
->>>>>>> Stashed changes
+        image: gitea.cocointhe.cloud/coco/landingpage:v0.4.0
         service: 5000
         ingress:
           public: true
@@ -51,6 +47,16 @@ spec:
   policyTypes:
     - Egress
   egress:
+    - to:
+      - ipBlock:
+          cidr: 0.0.0.0/0
+          except:
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+          - 192.168.0.0/16
+      ports:
+      - protocol: TCP
+        port: 443
     - to:
         - ipBlock:
             cidr: 192.168.1.129/32

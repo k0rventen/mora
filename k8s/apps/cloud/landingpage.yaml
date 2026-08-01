@@ -16,7 +16,7 @@ spec:
   values:
     apps:
       - name: landingpage
-        image: gitea.cocointhe.cloud/coco/landingpage:v0.4.0
+        image: gitea.cocointhe.cloud/coco/landingpage:v0.4.0@sha256:aa1f06f847ba182af48a000859ae80b6bdb2ced0ae3d379c56dd82626763209d
         service: 5000
         ingress:
           public: true

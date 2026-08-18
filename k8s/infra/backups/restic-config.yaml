@@ -1,7 +1,7 @@
 apiVersion: v1
 stringData:
   RESTIC_PASSWORD: ENC[AES256_GCM,data:+ZtL7InClRynoS8=,iv:kQPTo/Y55JU0sanzKf9ICk+oM9eskjYIAkgLYIvZBCw=,tag:j6b2IQvH0YCSXVezkMlcaQ==,type:str]
-  RSYNC_REMOTE_REPO: ENC[AES256_GCM,data:Hgy6Le1KsgExVLuBK+N5f2R93fFBMpdTqKbiIxVeOu1p0ubxWDPBOdO4PQ0kEAr1N8b6YT2RvbJkF8mWuoREYuim9oOp,iv:HeQH9aSd5xZWNPIOTNr17guuQ26AEd7e61re0p1qJTE=,tag:/kscAQhxxphroqou4wS7gg==,type:str]
+  RSYNC_REMOTE_REPO: ENC[AES256_GCM,data:oZqoGCcq6iqjMT0oQrVRrsmDjiZprl3hG7XZ4Z5E6Fozy0aLyusfXJYvbYG0fVsQLwikadMcsJgADkhLvE5CeYqUv+wGww==,iv:yJdcAVSwqZNjV2EnaUZlhHwJLAIS0EvlsYrGvcEOqD4=,tag:0f3wAkDUBT8zJyPBAdtRPw==,type:str]
   RESTIC_LOCAL_REPO: ENC[AES256_GCM,data:FFNirb6jfA2N5cP6pyen/+QSGip/Xqc=,iv:BWI6bqEHoJ/Pergo1LrTA3XS/LdANx7Vfq4+fD8nUQA=,tag:01N9ez7L/DawqM1wZBoJLQ==,type:str]
   DATA_PATH: ENC[AES256_GCM,data:U96NpNc=,iv:hUEbfkPm39Z2AI/88+msYspWSN5qJlvZami/aCIGC48=,tag:A4Us/ShkZa7OJYAvRdgvbg==,type:str]
 kind: Secret
@@ -19,9 +19,9 @@ sops:
         -----END AGE ENCRYPTED FILE-----
       recipient: age16xc3m2q69s2le4hah3pcne50qn6mljhgc9mxekskwf0mp8fc0vaq5q5dz2
   encrypted_regex: (token|email|^data$|^stringData$|webhook$|creds$)
-  lastmodified: "2026-07-05T07:50:27Z"
-  mac: ENC[AES256_GCM,data:Y7R0om491JlYdvwH25Lr5ewISHuEwy69gqBVdh336e+vtqeNo1glaOYwR7ZuUIgSh5kynbcAbnKf1M6Pne7qSI3kiwZKPgeQGXa+Xd5x8SsaW37DA3C0uPOcz9h7VahzMx2aXuftk4F4K1vnJoZG86z92O4HacbE/dbl3SRWD5o=,iv:EG/m6I1KcC9pd64Vdp/2aM1B41u3ikn8wdYWRXlyBBI=,tag:m/5T/Ga2I3eaftY6HRFuXw==,type:str]
-  version: 3.13.2
+  lastmodified: "2026-08-18T18:30:20Z"
+  mac: ENC[AES256_GCM,data:S7fjaa2RRnPWECunN8xaNV498Hz9+ecflYC0d9Nm6fqqawhWNJdm+qiyH91L8Vi3qGpwp0IqCfnYDnORK8dhtugFWfTn2kBxbaVTOXsFgvDjn/HA7wpH8phUCXz9ohuTaA8ANWM+eW51HxAfBUv8crNXFVg7tYSlWn6OaC+zzys=,iv:24mCPQOCpiLwYXko8uFookWFSt2bYdQT0lREdaaljrA=,tag:mxdbEDLWC2eTS2M+Y29fBA==,type:str]
+  version: 3.13.3
 ---
 apiVersion: v1
 data:
@@ -41,6 +41,6 @@ sops:
         -----END AGE ENCRYPTED FILE-----
       recipient: age16xc3m2q69s2le4hah3pcne50qn6mljhgc9mxekskwf0mp8fc0vaq5q5dz2
   encrypted_regex: (token|email|^data$|^stringData$|webhook$|creds$)
-  lastmodified: "2026-07-05T07:50:27Z"
-  mac: ENC[AES256_GCM,data:Y7R0om491JlYdvwH25Lr5ewISHuEwy69gqBVdh336e+vtqeNo1glaOYwR7ZuUIgSh5kynbcAbnKf1M6Pne7qSI3kiwZKPgeQGXa+Xd5x8SsaW37DA3C0uPOcz9h7VahzMx2aXuftk4F4K1vnJoZG86z92O4HacbE/dbl3SRWD5o=,iv:EG/m6I1KcC9pd64Vdp/2aM1B41u3ikn8wdYWRXlyBBI=,tag:m/5T/Ga2I3eaftY6HRFuXw==,type:str]
-  version: 3.13.2
+  lastmodified: "2026-08-18T18:30:20Z"
+  mac: ENC[AES256_GCM,data:S7fjaa2RRnPWECunN8xaNV498Hz9+ecflYC0d9Nm6fqqawhWNJdm+qiyH91L8Vi3qGpwp0IqCfnYDnORK8dhtugFWfTn2kBxbaVTOXsFgvDjn/HA7wpH8phUCXz9ohuTaA8ANWM+eW51HxAfBUv8crNXFVg7tYSlWn6OaC+zzys=,iv:24mCPQOCpiLwYXko8uFookWFSt2bYdQT0lREdaaljrA=,tag:mxdbEDLWC2eTS2M+Y29fBA==,type:str]
+  version: 3.13.3

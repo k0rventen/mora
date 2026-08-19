@@ -28,6 +28,8 @@ spec:
             value: gitea.cocointhe.cloud
           - name: GITEA__server__SSH_PORT
             value: "2222"
+          - name: GITEA__webhook__ALLOWED_HOST_LIST
+            value: '*.cocointhe.cloud'
           - name: GITEA_RUNNER_REGISTRATION_TOKEN
             valueFrom:
               secretKeyRef:

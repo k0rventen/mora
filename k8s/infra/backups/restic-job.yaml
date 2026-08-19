@@ -14,7 +14,7 @@ spec:
           restartPolicy: Never
           hostname: cluster # set hostname so the backups use this for consistency instead of a pod generated name
           containers:
-            - image: gitea.cocointhe.cloud/coco/restic:v0.4.7
+            - image: gitea.cocointhe.cloud/coco/restic:v0.4.7@sha256:69d5c3ab709aa32613e5388b9bb8a3522227c5640be04f7c3f3f99dcaa59f475
               name: restic-backup
               envFrom:
                 - secretRef:

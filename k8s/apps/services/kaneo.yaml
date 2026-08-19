@@ -1,0 +1,43 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kaneo
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: ./appchart
+      version: "x.x.x"
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 1h
+  values:
+    apps:
+      - name: kaneo-postgres
+        image: postgres:16-alpine
+        containerSpec:
+          envFrom:
+            - secretRef:
+                name: kaneo-config # Secret containing .env variables
+        service: 5432
+        pvc:
+        - kaneo-postgres-data
+        volumeMounts:
+          - name: kaneo-postgres-data
+            mountPath: /var/lib/postgresql/data
+        volumes:
+          - name: kaneo-postgres-data
+            persistentVolumeClaim:
+              claimName: kaneo-postgres-data
+
+      - name: kaneo
+        image: ghcr.io/usekaneo/kaneo:2.19.1
+        containerSpec:
+          envFrom:
+            - secretRef:
+                name: kaneo-config # Secret containing .env variables
+        service: 5173
+        ingress:
+          domain: kaneo.cocointhe.cloud

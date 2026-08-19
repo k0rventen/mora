@@ -2,11 +2,17 @@
 
 <div align="center">
 
-![logo](./resources/logo.png)
+![logo](./resources/mora.png)
 
-<h1>cluster</h1>
+<h1>Mora</h1>
 
 My self hosted cloud, available at [cocointhe.cloud](https://cocointhe.cloud).
+
+```
+mò|ra
+s.f., "frutto del gelso o del rovo"
+English translation: blackberry
+```
 
 </div>
 
@@ -29,7 +35,7 @@ My self hosted cloud, available at [cocointhe.cloud](https://cocointhe.cloud).
 </details>
 
 
-## Software
+## Hardware and Software
 
 Here is a top view diagram of the main components:
 
@@ -44,37 +50,48 @@ In `k8s/` there are 3 main folders:
   The interval for the source GitRepo is set to `1m`, so changes will be picked up within a minute or so.
 - `infra` represents what's needed for the cluster to function:
   - a [Local Path Provisioner](https://github.com/rancher/local-path-provisioner) for handling persistent storage
-  - an IngressController with [Traefik](https://github.com/traefik/traefik), one private (listens on local lan), one "public",
-  - [cert-manager](https://github.com/cert-manager/cert-manager) for certificates management of my domain,
+  - an IngressController with [Traefik](https://github.com/traefik/traefik), one private (listens on local lan), one "public" routed through a VPS,
+  - [cert-manager](https://github.com/cert-manager/cert-manager) for certificates management of my domain with [cert-manager-webhook-ovh](https://github.com/aureq/cert-manager-webhook-ovh)
   - [kube-vip](https://github.com/kube-vip/kube-vip) for managing the cluster's VIP.  
   - [rathole](https://github.com/rathole-org/rathole) for exposing part of my services to the outside world ([see here](#cloudflare-tunnel-alternative-w-a-vps)),
   - [tailscale-operator](https://github.com/tailscale/tailscale/tree/main/cmd/k8s-operator/deploy) for accessing my private services from wherever (using a subnet route) and for my cluster services to access my offsite backup server
   - [system-upgrade-controller](https://github.com/rancher/system-upgrade-controller) for managing k8s upgrades directly in the cluster using CRDs.
   - a [renovate](https://github.com/renovatebot/renovate) cronjob to create PR for components updates (w/ auto merging when it's a patch level update and other rules)
-  - a [restic](https://github.com/restic/restic) cronjob that create a remote backup of the whole nfs dir (in case the server catches on fire) for DR situation,
+  - a [restic](https://github.com/restic/restic) cronjob that create a local backup of the cluster data (if an app borks itself) and rsync it to a remote location (in case the server catches on fire)
   - [kyverno](https://kyverno.io/) for enforcing policies in the cluster,
-  - [goldilocks](https://github.com/FairwindsOps/goldilocks) for automatic adjustments of limits/requests,
+  - [goldilocks](https://github.com/FairwindsOps/goldilocks) and [vpa](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler) for automatic adjustments of limits/requests,
   - a [vcluster](https://www.vcluster.com/docs/vcluster/) where I do all my pre production testing, see [here](#staging-env).
   - [falco](https://github.com/falcosecurity/falco) for eBPF based behavior detection
   - [owasp/modsecurity-csr](https://coreruleset.org/) as a 'WAF' for traefik 
 
 - `apps`, the actual services running on the cluster:
+  Some 'core' services:
   - [adguard](https://github.com/AdguardTeam/AdGuardHome) for DNS/DHCP
+  - [pocketid](https://github.com/pocket-id/pocket-id) as an OIDC provider
+  - [atuin](https://github.com/atuinsh/atuin) for a centralized shell history
+  - [uptime kuma](https://github.com/louislam/uptime-kuma) as a simple availability check system
+  - [n8n](https://github.com/n8n-io/n8n) for basic automation workflows
+  - [grafana](https://github.com/grafana/grafana) + [prometheus](https://github.com/prometheus/prometheus) + [loki](https://github.com/grafana/loki) for monitoring the cluster and workloads (metrics + logs)
+
+  And more user-facing services:
+  - [grist](https://github.com/gristlabs/grist-core) for a modern take on spreadsheets
+  - [jellyfin](https://github.com/jellyfin/jellyfin) for local VOD + music (using [explo](https://github.com/LumePart/Explo), [musicgrabber](https://gitlab.com/g33kphr33k/musicgrabber) and [AudioMuse](https://github.com/NeptuneHub/AudioMuse-AI))
   - [gitea](https://github.com/go-gitea/gitea) for local git and CI/CD
+  - [kaneo](https://github.com/usekaneo/kaneo) for project tracking
   - [paperless-ngx](https://github.com/paperless-ngx/paperless-ngx) for my important files
   - [immich](https://github.com/immich-app/immich) for photos backups and sync
   - [vaultwarden](https://github.com/dani-garcia/vaultwarden) as my passwords manager
   - [filebrowser](https://github.com/gtsteffaniak/filebrowser) for file sharing
-  - [glance](https://github.com/glanceapp/glance) as my internet homepage
-  - [pocketid](https://github.com/pocket-id/pocket-id) as an OIDC provider
-  - [atuin](https://github.com/atuinsh/atuin) for my centralized shell history
-  - [uptime kuma](https://github.com/louislam/uptime-kuma) as a simple availability dashboard
-  - [n8n](https://github.com/n8n-io/n8n) for basic automation workflows
-  - [grafana](https://github.com/grafana/grafana) + [prometheus](https://github.com/prometheus/prometheus) + [loki](https://github.com/grafana/loki) for monitoring the cluster
-  - [grist](https://github.com/gristlabs/grist-core) for a modern take on spreadsheets
-  - [jellyfin](https://github.com/jellyfin/jellyfin)
-  - and some other stuff like a blog , static sites, etc..
+  - [pairdrop](https://github.com/schlagmichdoch/pairdrop) for Airdrop like across all devices
+  - [glance](https://github.com/glanceapp/glance) as my internet homepage (see [news.cocointhe.cloud](https://news.cocointhe.cloud))
+  - and some self-built stuff like:
+    - a blog
+    - a groceries list
+    - a pushup tracker
+    - a notifications hub using WebPush
+    - custom fetchers for podcasts, exporters for my solar panel , various public sources..
 
+  
 I try to adhere to gitops/automation principles.
 Some things aren't automated but it's mainly toil (one-time-things during setup etc..).
 99% of the infrastructure should be deployable by following these instructions (assuming data and encryption keys are known).
@@ -85,10 +102,11 @@ Some things aren't automated but it's mainly toil (one-time-things during setup 
 - [sops](https://github.com/getsops/sops) + [age](https://github.com/FiloSottile/age/): encryption
 - [git](https://git-scm.com/): change management
 - [gitleaks](https://github.com/gitleaks/gitleaks): secret detection as a pre-commit hook
-
+- [vcluster cli](https://github.com/loft-sh/vcluster): virtual staging cluster management
 ```
+
 # install everything needed
-brew install git ansible fluxcd/tap/flux sops age gitleaks opkssh
+brew install git ansible fluxcd/tap/flux sops age gitleaks opkssh vcluster
 
 # tell git where to find its hooks
 git config core.hooksPath .githooks
@@ -261,23 +279,23 @@ It's backed up daily onto the same ssd (mainly for rollbacks and potential local
 For disaster-recovery situations, it's also backed up daily onto a HDD offsite, which can be accessed through my tailnet.
 
 #### restic setup
-The backup tool is [restic](https://restic.net/). It's deployed as a cronjob in the cluster. It launches a simple script:
+The backup tool is [restic](https://restic.net/). It's deployed as a cronjob in the cluster. It launches a simple script as such:
 
 ```bash
 # First restic backup command
-restic backup -e $RESTIC_NFS_PATH -r $RESTIC_NFS_PATH .
+restic backup -r $RESTIC_REPO_PATH $CLUSTER_DATA
 
 # cleanup old backups
-restic -r $RESTIC_NFS_PATH forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12
+restic -r $RESTIC_REPO_PATH forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12
 
 # remote location backup using rsync incremental backup
-rsync -avz --delete -e "ssh -i sshkey -o StrictHostKeyChecking=off" . $RESTIC_REMOTE_REPO
+rsync -avz --delete -e "ssh -i sshkey -o StrictHostKeyChecking=off" $RESTIC_REPO_PATH $RESTIC_REMOTE_REPO
 ```
 
 To create the restic repo:
 
 ```
-restic init nfs-backups
+restic init $RESTIC_REPO_PATH
 ```
 
 2. remote repo

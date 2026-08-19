@@ -1,0 +1,92 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: homebridge
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: ./appchart
+      version: "x.x.x"
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 10m
+  values:
+    apps:
+      - name: homebridge
+        podSpec:
+          hostNetwork: true
+        image: homebridge/homebridge:2026-07-31
+        volumeMounts:
+          - name: homebridge-data
+            mountPath: /homebridge
+        volumes:
+          - name: homebridge-data
+            persistentVolumeClaim:
+              claimName: homebridge-data
+        service: 8581
+        ingress:
+          domain: homebridge.cocointhe.cloud
+        pvc:
+          - homebridge-data
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: mqtt
+# spec:
+#   selector:
+#     matchLabels:
+#       app: mqtt
+#   template:
+#     metadata:
+#       labels:
+#         app: mqtt
+#     spec:
+#       containers:
+#       - name: mqtt
+#         image: eclipse-mosquitto:alpine
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: mqtt
+# spec:
+#   ports:
+#   - port: 1883
+#     protocol: TCP
+#     targetPort: 1883
+#   selector:
+#     app: mqtt
+#   type: LoadBalancer
+# ---
+# apiVersion: helm.toolkit.fluxcd.io/v2
+# kind: HelmRelease
+# metadata:
+#   name: motion
+# spec:
+#   interval: 24h
+#   chart:
+#     spec:
+#       chart: ./appchart
+#       version: "x.x.x"
+#       sourceRef:
+#         kind: GitRepository
+#         name: flux-system
+#         namespace: flux-system
+#       interval: 10m
+#   values:
+#     apps:
+#       - name: motion
+#         image: gitea.cocointhe.cloud/coco/motion:v0.2.0
+#         containerSpec:
+#           imagePullPolicy: Always
+#         volumeMounts:
+#           - name: motion-data
+#             mountPath: /data
+#         volumes:
+#           - name: motion-data
+#             persistentVolumeClaim:
+#               claimName: filebrowser-data

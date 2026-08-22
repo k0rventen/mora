@@ -16,7 +16,7 @@ spec:
   values:
     apps:
       - name: filebrowser
-        image: ghcr.io/gtsteffaniak/filebrowser:1.5.2-stable@sha256:adc48bbc85a7f3ab3994cf2cc721159ad82046ea9edcaf22fdc41ef4be6466f7
+        image: ghcr.io/gtsteffaniak/filebrowser:1.5.3-stable@sha256:e2ac55ccbe53d63b3f1d7d5ea5b82edf589b005a4b747b59912f97c6ba4f969e
         volumeMounts:
           - name: filebrowser-data
             mountPath: /data

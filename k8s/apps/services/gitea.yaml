@@ -70,7 +70,7 @@ spec:
           - name: GITEA_INSTANCE_URL
             value: "https://gitea.cocointhe.cloud"
           - name: GITEA_RUNNER_LABELS
-            value: "ubuntu-latest:docker://gitea.cocointhe.cloud/coco/ci-runner" # lighter image with only git npm and docker
+            value: "ubuntu-latest:docker://gitea.cocointhe.cloud/coco/ci-runner:2026.09.03.63d4acf" # custom image with everything needed for most pipelines
           - name: GITEA_RUNNER_REGISTRATION_TOKEN
             valueFrom:
               secretKeyRef:

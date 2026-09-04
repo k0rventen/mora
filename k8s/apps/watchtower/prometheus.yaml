@@ -25,6 +25,7 @@ spec:
     # server:
     #   extraFlags:
     #     - web.enable-admin-api
+    retention: "31d"
     scrapeConfigs:
       prometheus:
         enabled: false

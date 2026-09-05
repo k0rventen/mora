@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name:  scaphandre
-        image: hubblo/scaphandre:1.0.3
+        image: hubblo/scaphandre:1.0.3@sha256:9f1aa7017c56c6628f6f232ddab336cb1c64c165be179b3d4d3589cf5110dd8e
         args:
           - prometheus
         ports:

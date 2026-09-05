@@ -14,6 +14,20 @@ s.f., "frutto del gelso o del rovo"
 English translation: blackberry
 ```
 
+![Availability (7d)](https://kromgo.cocointhe.cloud/badges/availability)
+<br>
+![Rack Temperature](https://kromgo.cocointhe.cloud/badges/cluster_temperature)
+![Power draw](https://kromgo.cocointhe.cloud/badges/cluster_power_draw)
+<br>
+![Pods](https://kromgo.cocointhe.cloud/badges/pods_count)
+![k8s version](https://kromgo.cocointhe.cloud/badges/kubernetes_version)
+![flux version](https://kromgo.cocointhe.cloud/badges/flux_version)
+<br>
+![Uptime](https://kromgo.cocointhe.cloud/badges/cluster_uptime_days)
+![CPU Usage](https://kromgo.cocointhe.cloud/badges/cluster_cpu_usage)
+![RAM Usage](https://kromgo.cocointhe.cloud/badges/cluster_memory_usage)
+![DISK Usage](https://kromgo.cocointhe.cloud/badges/cluster_disk_usage)
+
 </div>
 
 <details>

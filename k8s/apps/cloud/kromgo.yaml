@@ -1,0 +1,124 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kromgo
+spec:
+  interval: 24h
+  chart:
+    spec:
+      chart: ./appchart
+      version: "x.x.x"
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 10m
+  values:
+    apps:
+      - name: kromgo
+        image: ghcr.io/home-operations/kromgo:0.16.1
+        service: 8080
+        env:
+          - name: KROMGO_PROMETHEUS_URL
+            value: http://prometheus-server.watchtower.svc.cluster.local
+          - name: KROMGO_METRICS_ENABLED
+            value: "false"
+        volumeMounts:
+          - name: kromgo-config
+            mountPath: /config/config.yaml
+            subPath: config.yaml
+        volumes:
+          - name: kromgo-config
+            configMap:
+              name: kromgo-config
+        ingress:
+          public: true
+          geoblock: false
+          domain: kromgo.cocointhe.cloud
+    configmaps:
+      kromgo-config:
+        config.yaml: |
+          ---
+          # yaml-language-server: $schema=https://raw.githubusercontent.com/kashalls/kromgo/main/config.schema.json
+          defaults:
+            badge:
+              font: dejavu-sans # dejavu-sans (default, shields.io-style), dejavu-sans-bold, comic-neue, comic-neue-bold
+              size: 12 # badge font size in points
+              style: for-the-badge # flat (default), flat-square, plastic, or
+          badges:
+            - id: kubernetes_version
+              query: label_replace(kubernetes_build_info{}, "git_version", "$1", "git_version", "(.+)")
+              valueExpr: labels[?"git_version"].orValue("unknown")
+              title: k8s version
+              colorExpr: '"#326ce5"'
+
+            - id: flux_version
+              query: gotk_token_cache_evictions_total{app="source-controller"}
+              valueExpr: labels[?"app_kubernetes_io_version"].orValue("unknown")
+              title: flux version
+              colorExpr: '"#326ce5"'
+
+            - id: cluster_temperature
+              title: Rack Temperature
+              query: round(max(node_hwmon_temp_celsius{}))
+              valueExpr: string(result) + "°C"
+              colorExpr: 'result < 55 ? "green" : result < 65 ? "orange" : "red"'
+
+            - id: cluster_power_draw
+              title: Power draw
+              query: round(scaph_host_power_microwatts / 1000000 + 3,.1)
+              valueExpr: string(result) + "W"
+              colorExpr: '"#ffda1e"'
+
+            - id: cluster_cpu_usage
+              title: CPU Usage
+              query: round(avg(100 * avg(1 - rate(node_cpu_seconds_total{mode="idle"}[5m])) by (instance)))
+              valueExpr: string(result) + "%"
+              colorExpr: 'result < 50 ? "green" : result < 75 ? "orange" : "red"'
+
+            - id: cluster_memory_usage
+              title: RAM Usage
+              query: round(sum(node_memory_MemTotal_bytes{} - node_memory_MemAvailable_bytes{}) / sum(node_memory_MemTotal_bytes{}) * 100)
+              valueExpr: string(result) + "%"
+              colorExpr: 'result < 50 ? "green" : result < 75 ? "orange" : "red"'
+
+            - id: cluster_disk_usage
+              title: DISK Usage
+              query: round((1 - node_filesystem_free_bytes{mountpoint="/data"} / node_filesystem_size_bytes{mountpoint="/data"})  * 100)
+              valueExpr: string(result) + "%"
+              colorExpr: 'result < 50 ? "green" : result < 75 ? "orange" : "red"'
+
+            - id: availability
+              title: Availability (7d)
+              query: round(min(avg_over_time(monitor_status[7d]) * 100),.01)
+              valueExpr: string(result) + "%"
+              colorExpr: 'result < 90 ? "red" : result < 98 ? "orange" : "green"'
+
+            - id: cluster_uptime_days
+              title: Uptime
+              query: round((time() - max(kube_node_created{})) / 86400)
+              valueExpr: string(result) + "d"
+              colorExpr: 'result < 180 ? "green" : result < 360 ? "orange" : "red"'
+
+            - id: pods_count
+              title: Pods
+              query: sum(kubelet_active_pods)
+              colorExpr: '"#9D00FF"'
+---
+#kromgo-> prom
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-kromgo
+spec:
+  podSelector:
+    matchLabels:
+      app: kromgo
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector: {}
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: prometheus

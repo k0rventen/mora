@@ -16,7 +16,7 @@ spec:
   values:
     apps:
       - name: kromgo
-        image: ghcr.io/home-operations/kromgo:0.16.1
+        image: ghcr.io/home-operations/kromgo:0.16.1@sha256:ad39dd32da600ea261112e7a098345d474d48c997790b0373eb651c66e490844
         service: 8080
         env:
           - name: KROMGO_PROMETHEUS_URL

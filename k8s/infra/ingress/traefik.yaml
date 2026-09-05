@@ -137,7 +137,6 @@ spec:
       websecure:
         http:
           middlewares:
-            - ingress-geoblock@kubernetescrd
             - ingress-errors@kubernetescrd
             - ingress-modsec@kubernetescrd
         forwardedHeaders:

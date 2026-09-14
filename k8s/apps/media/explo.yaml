@@ -16,7 +16,7 @@ spec:
   values:
     apps:
       - name: explo
-        image: ghcr.io/lumepart/explo:v1.1.3@sha256:5f7bc5a8266fe71a4991d79670bf35506aca5d01e6f08016c717197c09d1cf83
+        image: ghcr.io/lumepart/explo:v1.2.0@sha256:680eac0592d013aac8768e2c3bae02345f74083f3a4585337420446764eb66fc
         env:
           - name: EXECUTE_ON_START
             value: "true"

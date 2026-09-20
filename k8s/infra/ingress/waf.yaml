@@ -19,7 +19,7 @@ spec:
         image: traefik/whoami@sha256:200689790a0a0ea48ca45992e0450bc26ccab5307375b41c84dfc4f2475937ab
         service: 80
       - name: waf
-        image: owasp/modsecurity-crs:4.29.0-nginx-alpine-202609111209@sha256:55e454a143e580a576ad4ca85129bd533ec1bb4e2bf37dd1edbaeac58c07b066
+        image: owasp/modsecurity-crs:4.29.0-nginx-alpine-202609180209@sha256:de981bb077bb61e101d629773e65dd300be93bebefdebc9459c26d8cdea5dcfc
         service: 8080
         env:
         - name: ALLOWED_METHODS

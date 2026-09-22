@@ -17,6 +17,14 @@ spec:
     apps:
       - name: jellyfin
         image: ghcr.io/jellyfin/jellyfin:12.1@sha256:008ec8024bdaaa6f0a3f0de468e185633eeba9d67c56936e8dbf5ef6b8d6200f
+        podSpec:
+          securityContext:
+            supplementalGroups: # for DRI access
+              - 993
+        containerSpec:
+          securityContext:
+            privileged: true
+
         volumeMounts:
           - name: jellyfin-cache
             mountPath: /cache
@@ -26,6 +34,10 @@ spec:
             mountPath: /data/shows
           - name: jellyfin-music
             mountPath: /data/music
+          - name: jellyfin-books
+            mountPath: /data/books
+          - name: 'render-device'
+            mountPath: '/dev/dri/renderD128'
 
         volumes:
           - name: jellyfin-cache
@@ -40,6 +52,12 @@ spec:
           - name: jellyfin-shows
             persistentVolumeClaim:
               claimName: jellyfin-shows
+          - name: jellyfin-books
+            persistentVolumeClaim:
+              claimName: jellyfin-books
+          - name: 'render-device'
+            hostPath:
+              path: '/dev/dri/renderD128'
 
         service: 8096
         pvc:
@@ -47,7 +65,7 @@ spec:
           - jellyfin-shows
           - jellyfin-config
           - jellyfin-cache
-
+          - jellyfin-books
         ingress:
           domain: jellyfin.cocointhe.cloud
           public: true

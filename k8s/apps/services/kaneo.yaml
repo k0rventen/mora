@@ -33,7 +33,7 @@ spec:
               claimName: kaneo-postgres-data
 
       - name: kaneo
-        image: ghcr.io/usekaneo/kaneo:2.24.0@sha256:1f1fc35e45da5dd4a991ce741e2492510068449db3e37b8e06a4de13a91bce2a
+        image: ghcr.io/usekaneo/kaneo:2.26.0@sha256:549af9f6faf74825171badeda63db124461125bf9151425519b580513d4e4f5b
         containerSpec:
           envFrom:
             - secretRef:

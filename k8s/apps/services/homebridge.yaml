@@ -31,30 +31,30 @@ spec:
           domain: homebridge.cocointhe.cloud
         pvc:
           - homebridge-data
-      - name: motion
-        image: gitea.cocointhe.cloud/coco/motion:v0.2.0@sha256:dfcc2b5ba5cd8b4338941de2cdbbf7c3eac58fc482ebcc78087dbecbcfc3625a
-        containerSpec:
-          imagePullPolicy: Always
-        volumeMounts:
-          - name: motion-data
-            mountPath: /data
-        volumes:
-          - name: motion-data
-            persistentVolumeClaim:
-              claimName: filebrowser-data
-      - name: mqtt
-        image: eclipse-mosquitto:alpine@sha256:38c0da4f2ef84284d47b3b3eeea1cb3bdeabe81ee10caf0cd5c5ff61ee3ea408
----
-# LB svc for mqtt
-apiVersion: v1
-kind: Service
-metadata:
-  name: mqtt
-spec:
-  ports:
-  - port: 1883
-    protocol: TCP
-    targetPort: 1883
-  selector:
-    app: mqtt
-  type: LoadBalancer
+#       - name: motion
+#         image: gitea.cocointhe.cloud/coco/motion:v0.2.0@sha256:dfcc2b5ba5cd8b4338941de2cdbbf7c3eac58fc482ebcc78087dbecbcfc3625a
+#         containerSpec:
+#           imagePullPolicy: Always
+#         volumeMounts:
+#           - name: motion-data
+#             mountPath: /data
+#         volumes:
+#           - name: motion-data
+#             persistentVolumeClaim:
+#               claimName: filebrowser-data
+#       - name: mqtt
+#         image: eclipse-mosquitto:alpine@sha256:38c0da4f2ef84284d47b3b3eeea1cb3bdeabe81ee10caf0cd5c5ff61ee3ea408
+# ---
+# # LB svc for mqtt
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: mqtt
+# spec:
+#   ports:
+#   - port: 1883
+#     protocol: TCP
+#     targetPort: 1883
+#   selector:
+#     app: mqtt
+#   type: LoadBalancer

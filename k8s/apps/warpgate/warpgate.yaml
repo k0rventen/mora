@@ -18,7 +18,7 @@ spec:
   values:
     apps:
       - name: warpgate
-        image: ghcr.io/warp-tech/warpgate:0.29.0@sha256:18069aa69b61eda90e4fa5a783ba7b9d54481496d3f20cf65bf9705b32faf975
+        image: ghcr.io/warp-tech/warpgate:0.29.1@sha256:a47b502039348c9f35b9fca222be1630cf975caf985d6e05ecdd186fbd1194d4
         containerSpec:
           # on first launch, shell in the container and do `warpgate setup`
           # command:

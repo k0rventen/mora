@@ -12,5 +12,5 @@ all:
       - { name: fs.inotify.max_user_watches, value: 200000 }
 
     tmpfs_mount_point: /var/log/pods
-    tmpfs_size: 256M
+    tmpfs_size: 1G
     ansible_python_interpreter: auto_silent

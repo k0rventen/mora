@@ -113,21 +113,6 @@ spec:
     kind: GitRepository
     name: flux-system
 ---
-# apiVersion: kustomize.toolkit.fluxcd.io/v1
-# kind: Kustomization
-# metadata:
-#   name: longhorn
-#   namespace: flux-system
-# spec:
-#   interval: 1h
-#   targetNamespace: longhorn-system
-#   path: ./k8s/infra/longhorn
-#   prune: true
-#   sourceRef:
-#     kind: GitRepository
-#     name: flux-system
-
----
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
@@ -173,48 +158,6 @@ spec:
     kind: GitRepository
     name: flux-system
 ---
-# apiVersion: kustomize.toolkit.fluxcd.io/v1
-# kind: Kustomization
-# metadata:
-#   name: kube-vip
-#   namespace: flux-system
-# spec:
-#   interval: 1h
-#   targetNamespace: kube-vip
-#   path: ./k8s/infra/kube-vip
-#   prune: true
-#   sourceRef:
-#     kind: GitRepository
-#     name: flux-system
----
-# apiVersion: kustomize.toolkit.fluxcd.io/v1
-# kind: Kustomization
-# metadata:
-#   name: staging-vcluster
-#   namespace: flux-system
-# spec:
-#   interval: 1h
-#   targetNamespace: staging
-#   path: ./k8s/infra/vcluster
-#   prune: true
-#   sourceRef:
-#     kind: GitRepository
-#     name: flux-system
-# ---
-# apiVersion: kustomize.toolkit.fluxcd.io/v1
-# kind: Kustomization
-# metadata:
-#   name: vpa
-#   namespace: flux-system
-# spec:
-#   interval: 1h
-#   targetNamespace: vpa
-#   path: ./k8s/infra/vpa
-#   prune: true
-#   sourceRef:
-#     kind: GitRepository
-#     name: flux-system
----
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
@@ -254,20 +197,6 @@ spec:
   interval: 1h
   targetNamespace: falco
   path: ./k8s/infra/falco
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: reloader
-  namespace: flux-system
-spec:
-  interval: 1h
-  targetNamespace: reloader
-  path: ./k8s/infra/reloader
   prune: true
   sourceRef:
     kind: GitRepository

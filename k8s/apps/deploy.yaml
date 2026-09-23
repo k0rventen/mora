@@ -59,3 +59,18 @@ spec:
   path: "./k8s/apps/media"
   prune: true
   timeout: 1m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: warpgate
+  namespace: flux-system
+spec:
+  interval: 1h
+  targetNamespace: warpgate
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: "./k8s/apps/warpgate"
+  prune: true
+  timeout: 1m

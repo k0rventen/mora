@@ -1,0 +1,46 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ytzero
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: ./appchart
+      version: "x.x.x"
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 10m
+  values:
+    apps:
+      - name: ytzero
+        image: ghcr.io/pelski/ytzero:2026.09.8
+        env:
+        - name: IDLE_TIMEOUT_SECONDS
+          value: "120"
+        - name: REFRESH_INTERVAL_MINUTES
+          value: "10"
+        - name: FULL_SYNC_INTERVAL_MINUTES
+          value: "30"
+        - name: VIDEO_MAINTENANCE_MAX_AGE_DAYS
+          value: "90"
+        - name: DB_PATH
+          value: /data/db/ytzero.db
+        - name: IMG_CACHE_DIR
+          value: /data/imgcache
+
+
+        volumeMounts:
+          - name: ytzero-data
+            mountPath: /data
+        volumes:
+          - name: ytzero-data
+            persistentVolumeClaim:
+              claimName: ytzero-data
+        service: 3001
+        ingress:
+          domain: youtube.cocointhe.cloud
+        pvc:
+          - ytzero-data

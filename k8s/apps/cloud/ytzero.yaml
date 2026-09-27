@@ -16,7 +16,7 @@ spec:
   values:
     apps:
       - name: ytzero
-        image: ghcr.io/pelski/ytzero:2026.09.8
+        image: ghcr.io/pelski/ytzero:2026.09.8@sha256:fb60b9b567278b91251742a0880e79bd05d61f5c5fa1ae4731f06e5a2896330d
         env:
         - name: IDLE_TIMEOUT_SECONDS
           value: "120"

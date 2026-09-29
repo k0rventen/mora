@@ -31,8 +31,14 @@ spec:
       jobEnabled: false
       upgradeVersionCheck: false
     longhornUI:
-      # -- Replica count for Longhorn UI.
       replicas: 1
+    longhornGlobalManager:
+      replicas: 1
+    csi:
+      attacherReplicaCount: 1
+      provisionerReplicaCount: 1
+      resizerReplicaCount: 1
+      snapshotterReplicaCount: 1
     persistence:
       # -- Setting that allows you to specify the default Longhorn StorageClass.
       defaultClass: false

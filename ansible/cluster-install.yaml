@@ -3,6 +3,41 @@
   hosts: all
   become: true
   tasks:
+    - name: prerequisites packages
+      apt:
+        update_cache: true
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+        state: present
+
+
+    - name: gvisor signing key
+      ansible.builtin.get_url:
+        url: "https://gvisor.dev/archive.key"
+        dest: /tmp/gvisor-archive.key
+        mode: "0644"
+
+    - name: gpg key
+      ansible.builtin.command:
+        cmd: gpg --dearmor --yes -o /usr/share/keyrings/gvisor-archive-keyring.gpg /tmp/gvisor-archive.key
+
+    - name: Add gvisor repo
+      ansible.builtin.apt_repository:
+        repo: >-
+          deb [arch=amd64 signed-by=/usr/share/keyrings/gvisor-archive-keyring.gpg] https://storage.googleapis.com/gvisor/releases release main
+        filename: gvisor
+        state: present
+        update_cache: true
+
+    - name: Install runsc
+      apt:
+        name: runsc
+        state: present
+        update_cache: true
+
     - name: Ensure log directory exists
       ansible.builtin.file:
         path: "{{ tmpfs_mount_point }}"
@@ -53,3 +88,22 @@
         --disable=metrics-server
       args:
         creates: /usr/local/bin/k3s
+
+    - name: add gvisor runtime to containerd
+      register: containerd_config
+      copy:
+        dest: /var/lib/rancher/k3s/agent/etc/containerd/config-v3.toml.tmpl
+        content: |
+          {% raw %}
+          {{ template "base" . }}
+          {% endraw %}
+          [plugins."io.containerd.cri.v1.runtime".containerd]
+            [plugins."io.containerd.cri.v1.runtime".containerd.runtimes]
+              [plugins."io.containerd.cri.v1.runtime".containerd.runtimes.gvisor]
+                runtime_type = "io.containerd.runsc.v1"
+
+    - name: Restart k3s
+      when: containerd_config is changed
+      systemd:
+        name: k3s
+        state: restarted

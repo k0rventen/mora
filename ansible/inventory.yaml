@@ -1,12 +1,12 @@
 all:
   children:
-    tepore:
+    mora:
       hosts:
-        tepore:
+        mora:
           ansible_host: 192.168.1.10
 
   vars:
-
+    k3s_version: v1.37.0+k3s1
     sysctl_inotify_settings:
       - { name: fs.inotify.max_user_instances, value: 1024 }
       - { name: fs.inotify.max_user_watches, value: 200000 }

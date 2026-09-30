@@ -54,7 +54,7 @@ spec:
           - name: docker-daemon-config
             mountPath: /etc/docker/daemon.json
             subPath: daemon.json
-          - name: docker-config
+          - name: runner-docker-config
             mountPath: /home/rootless/.docker/config.json
             subPath: config.json
           - name: gitea-runner-data
@@ -63,9 +63,9 @@ spec:
           - name: docker-daemon-config
             configMap:
               name: docker-daemon-dns
-          - name: docker-config
+          - name: runner-docker-config
             secret:
-              secretName: docker-config
+              secretName: runner-docker-config
           - name: gitea-runner-data
             persistentVolumeClaim:
               claimName: gitea-runner-data

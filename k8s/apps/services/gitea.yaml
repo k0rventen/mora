@@ -82,6 +82,8 @@ spec:
         containerSpec:
           securityContext:
             privileged: true
+        pvc:
+          - gitea-runner-data
 ---
 # fix the dns config of the DinD runner
 apiVersion: v1

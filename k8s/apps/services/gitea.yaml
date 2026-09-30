@@ -28,8 +28,6 @@ spec:
             value: gitea.cocointhe.cloud
           - name: GITEA__server__SSH_PORT
             value: "2222"
-          - name: GITEA__webhook__ALLOWED_HOST_LIST
-            value: '*.cocointhe.cloud'
           - name: GITEA_RUNNER_REGISTRATION_TOKEN
             valueFrom:
               secretKeyRef:
@@ -59,6 +57,8 @@ spec:
           - name: docker-config
             mountPath: /home/rootless/.docker/config.json
             subPath: config.json
+          - name: gitea-runner-data
+            mountPath: /data
         volumes:
           - name: docker-daemon-config
             configMap:
@@ -66,6 +66,9 @@ spec:
           - name: docker-config
             secret:
               secretName: docker-config
+          - name: gitea-runner-data
+            persistentVolumeClaim:
+              claimName: gitea-runner-data
         env:
           - name: GITEA_INSTANCE_URL
             value: "https://gitea.cocointhe.cloud"

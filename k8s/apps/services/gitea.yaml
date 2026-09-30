@@ -49,14 +49,14 @@ spec:
             persistentVolumeClaim:
               claimName: gitea-conf
       - name: runner
-        image: gitea/runner:4.0.1-dind-rootless@sha256:767119c7401d2e3a38f58367bad57fc9464c767f4c1a4f56587a493fe02f23b2
+        image: gitea/runner:4.0.1-dind
         volumeMounts:
           - name: docker-daemon-config
             mountPath: /etc/docker/daemon.json
             subPath: daemon.json
-          - name: runner-docker-config
-            mountPath: /home/rootless/.docker/config.json
-            subPath: config.json
+          # - name: runner-docker-config
+          #   mountPath: /home/rootless/.docker/config.json
+          #   subPath: config.json
           - name: gitea-runner-data
             mountPath: /data
         volumes:

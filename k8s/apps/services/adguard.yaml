@@ -47,8 +47,7 @@ spec:
         pvc:
           - adguard-data
         service: 42080
-        ingress:
-          domain: adguard.cocointhe.cloud
+
 --- # loadbalancer service for DNS queries
 apiVersion: v1
 kind: Service

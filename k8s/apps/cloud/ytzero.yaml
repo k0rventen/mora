@@ -30,9 +30,6 @@ spec:
           value: /data/db/ytzero.db
         - name: IMG_CACHE_DIR
           value: /data/imgcache
-
-        podSpec:
-          runtimeClassName: gvisor
         volumeMounts:
           - name: ytzero-data
             mountPath: /data

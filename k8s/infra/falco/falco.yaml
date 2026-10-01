@@ -48,8 +48,16 @@ spec:
         enabled: true
         replicaCount: 1
         disableauth: true
-
-    customRules:
+        image:
+          registry: docker.io
+          repository: falcosecurity/falcosidekick-ui
+          tag: "2.3.1"
+        redis:
+          image:
+            registry: docker.io
+            repository: redis
+            tag: "8.10.2-alpine"
+      customRules:
       disable-false-positives.yaml: |
         - rule: Packet socket created in container
           enabled: false

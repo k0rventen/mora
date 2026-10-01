@@ -27,37 +27,6 @@ spec:
               claimName: uptime-kuma-data
         ingress:
           domain: uptime.cocointhe.cloud
+          public: true
         pvc:
           - uptime-kuma-data
----
-# # kuma checks
-# apiVersion: networking.k8s.io/v1
-# kind: NetworkPolicy
-# metadata:
-#   name: allow-kuma-checks
-# spec:
-#   podSelector:
-#     matchLabels:
-#       app: uptime-kuma
-#   policyTypes:
-#   - Egress
-#   egress:
-#   # for dns/http checks
-#   - to:
-#     - ipBlock:
-#         cidr: 0.0.0.0/0
-#     ports:
-#     - protocol: UDP
-#       port: 53
-#     - protocol: TCP
-#       port: 443
-#   # for local infra checks
-#   - to:
-#     - ipBlock:
-#         cidr: 192.168.1.0/24
-
-#     # for remote infra checks
-#   - to:
-#     - namespaceSelector:
-#         matchLabels:
-#           kubernetes.io/metadata.name: tailscale

@@ -43,3 +43,4 @@ spec:
       # -- Setting that allows you to specify the default Longhorn StorageClass.
       defaultClass: false
       reclaimPolicy: Retain
+      defaultClassReplicaCount: 1

@@ -44,10 +44,10 @@ spec:
     falcosidekick:
       enabled: true
       replicaCount: 1
-    webui:
-      enabled: true
-      replicaCount: 1
-      disableauth: true
+      webui:
+        enabled: true
+        replicaCount: 1
+        disableauth: true
 
     customRules:
       disable-false-positives.yaml: |

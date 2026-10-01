@@ -31,7 +31,8 @@ spec:
         - name: IMG_CACHE_DIR
           value: /data/imgcache
 
-
+        podSpec:
+          runtimeClassName: gvisor
         volumeMounts:
           - name: ytzero-data
             mountPath: /data
@@ -42,5 +43,29 @@ spec:
         service: 3001
         ingress:
           domain: youtube.cocointhe.cloud
+          public: true
         pvc:
           - ytzero-data
+---
+# ytzero -> youtube
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ytzero-youtube
+spec:
+  podSelector:
+    matchLabels:
+      app: ytzero
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+              - 192.168.0.0/16
+      ports:
+        - protocol: TCP
+          port: 443

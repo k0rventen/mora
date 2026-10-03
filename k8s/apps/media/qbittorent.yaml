@@ -16,7 +16,7 @@ spec:
   values:
     apps:
       - name: qbittorrent
-        image: linuxserver/qbittorrent:5.2.4@sha256:b522f9f4b769f8f36d49d22d5eb6a92e9aa18904c6a1830b1439df511ec21983
+        image: linuxserver/qbittorrent:20.04.1@sha256:fc98c8af048936d0070dc5e5992feab08664f8a61a860d91be02f782f8721485
         env:
           - name: PUID
             value: "1000"

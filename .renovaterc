@@ -19,12 +19,18 @@
     { "matchUpdateTypes": ["pin"], "enabled": true },
     { "matchUpdateTypes": ["digest"], "enabled": false },
 
+    // n8n updates often and is not public.
+    { "matchUpdateTypes": ["minor"], "enabled": false, "matchPackageNames": ["ghcr.io/n8n-io/n8n"] },
+
     // renovate spams too much, so only update once a month
-    { "matchPackageNames": ["renovate/renovate"], "schedule": ["* * 1 * *"]},  
+    { "matchPackageNames": ["renovate/renovate"], "schedule": ["* * 1 * *"]},
 
     // do not update adguard without active standby
-    { "matchPackageNames": ["adguard/adguardhome"], "automerge": false},  
-    
+    { "matchPackageNames": ["adguard/adguardhome"], "automerge": false},
+
+    // renovate seems to not care if i close the PR and reopens it so
+    { "matchPackageNames": ["ghcr.io/immich-app/postgres", "linuxserver/qbittorrent"], "enabled": false},
+
     // owasp versionning is weird
     {
       "description": "Handle OWASP CRS container with nginx-alpine timestamp suffix",
@@ -32,15 +38,15 @@
       "matchPackageNames": ["owasp/modsecurity-crs"],
       "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-nginx-alpine-(?<build>\\d{12})$"
     },
-    // group immich related updates 
+    // group immich related updates
     {
       "matchDatasources": ["docker"],
       "matchPackageNames": ["/.*immich-app/immich-.*/"],
       "groupName": "immich"},
-    
+
     // do not automerge k3s as it upgrades the nodes
     { "matchPackageNames": ["k3s"], "automerge": false },
-    
+
     // do not change the versionning on the UpgradePlan Images as they will automatically use the one matching the version of the plan
     { "matchPackageNames":["rancher/k3s-upgrade"],"enabled": false}
   ],

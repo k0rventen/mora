@@ -3,7 +3,7 @@ name: Fluxcd updater
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 5 * * 2,6"
+    - cron: "0 19 * * 5"
 
 permissions:
   contents: write

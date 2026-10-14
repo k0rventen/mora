@@ -12,9 +12,9 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    tailscale.com/tailnet-ip: 100.110.187.29
+    tailscale.com/tailnet-ip: 100.115.180.50
     kustomize.toolkit.fluxcd.io/ssa: IfNotPresent
-  name: remote-pi # service name
+  name: offsite-pi
 spec:
-  externalName: placeholder # any value - will be overwritten by operator
+  externalName: placeholder # will be overwritten by operator
   type: ExternalName

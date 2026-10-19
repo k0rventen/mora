@@ -1,0 +1,34 @@
+apiVersion: secchio.cocointhe.cloud/v1alpha1
+kind: BackupSchedule
+metadata:
+  name: cloud-backup
+spec:
+  pvc:
+    selector:
+      helm.toolkit.fluxcd.io/namespace: cloud # we select all pvcs in the ns
+  repo:
+    endpoint: 192.168.1.20/backups
+    insecureTLS: true
+    secretName: restic-s3-secret
+  retention:
+    keepDaily: 4
+    keepWeekly: 4
+  schedule: '10 23 * * *'
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-secchio-s3-access
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: secchio
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+      - ipBlock:
+          cidr: 192.168.1.20/32
+      ports:
+      - protocol: TCP
+        port: 443

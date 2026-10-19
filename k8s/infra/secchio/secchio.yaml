@@ -1,0 +1,24 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: secchio
+spec:
+  interval: 5m0s
+  url: oci://ghcr.io/k0rventen/secchio
+  ref:
+    tag: 0.8.2
+---
+
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: secchio
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: secchio
+  interval: 10m
+  install:
+    crds: Create
+  upgrade:
+    crds: CreateReplace

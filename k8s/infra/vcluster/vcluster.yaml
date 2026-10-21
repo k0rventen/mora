@@ -22,6 +22,16 @@ spec:
         name: vcluster
   values:
     controlPlane:
+      proxy:
+        extraSANs:
+          - "vcluster.vcluster.svc.cluster.local"
+      statefulSet:
+        security:
+          podSecurityContext:
+            fsGroup: 12345
+          containerSecurityContext:
+            runAsUser: 12345
+            runAsNonRoot: true
       coredns:
         enabled: true
     integrations:

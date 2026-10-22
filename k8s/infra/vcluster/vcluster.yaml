@@ -48,6 +48,8 @@ spec:
           enabled: true
         storageClasses:
           enabled: true
+        runtimeClasses:
+          enabled: true
       toHost:
         ingresses:
           enabled: true

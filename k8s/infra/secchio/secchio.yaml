@@ -6,8 +6,8 @@ spec:
   interval: 5m0s
   url: oci://ghcr.io/k0rventen/secchio
   ref:
-    tag: 0.8.2
-    digest: sha256:b622547770b7ec509276e39ba71469480bcf587178d7b8a1b95b5a657858690d
+    tag: 0.8.3
+    digest: sha256:9a29962c71f9ba30a890e3cfc9daf6e69fd54b1bbb77eafc1d810ab7355c07a2
 ---
 
 apiVersion: helm.toolkit.fluxcd.io/v2

@@ -14,7 +14,18 @@ metadata:
   annotations:
     tailscale.com/tailnet-ip: 100.115.180.50
     kustomize.toolkit.fluxcd.io/ssa: IfNotPresent
-  name: offsite-pi
+  name: backup-box-offsite
+spec:
+  externalName: placeholder # will be overwritten by operator
+  type: ExternalName
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    tailscale.com/tailnet-ip: 100.113.135.54
+    kustomize.toolkit.fluxcd.io/ssa: IfNotPresent
+  name: backup-box-local
 spec:
   externalName: placeholder # will be overwritten by operator
   type: ExternalName

@@ -22,6 +22,10 @@ spec:
             - -config.file=/etc/loki/local-config.yaml
             - -querier.parallelise-shardable-queries=false
             - -reporting.enabled=false
+            - -store.retention=15d
+            - -compactor.retention-enabled=true
+            - -compactor.compaction-interval=24h
+            - -compactor.delete-request-store=filesystem
         volumeMounts:
           - name: loki-data
             mountPath: /loki

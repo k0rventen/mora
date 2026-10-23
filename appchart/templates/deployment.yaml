@@ -20,6 +20,11 @@ spec:
       {{- if .podSpec }}
       {{- toYaml .podSpec | nindent 6 }}
       {{- end }}
+
+      {{- if .secureRuntime }}
+      runtimeClassName: gvisor
+      {{- end }}
+
       containers:
         - name: {{ .name }}
           {{- if .resources }}
@@ -56,6 +61,9 @@ spec:
               drop:
                 - ALL
         {{- end }}
+      {{- if .critical }}
+      priorityClassName: critical
+      {{- end }}
 
       {{- if .volumes }}
       volumes:
@@ -107,6 +115,33 @@ spec:
   resources:
     requests:
       storage: 5Gi
+---
+{{- end }}
+{{- end }}
+
+
+---
+# pvc generation
+{{- if .persistentVolumes }}
+{{- range .persistentVolumes }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .name }}
+  {{- if .backup }}
+  labels:
+    backup: true
+  {{end}}
+
+spec:
+{{- if $.Values.storageClass }}
+  storageClassName: {{ $.Values.storageClass }}
+{{end}}
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .size }}
 ---
 {{- end }}
 {{- end }}

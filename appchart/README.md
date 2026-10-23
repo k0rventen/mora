@@ -4,25 +4,26 @@ a simple chart that ease deployment of classic apps on [my k8s cluster, lampone]
 
 The majority of apps deployed on my cluster are a simple container, exposing a service, with a small conf, and maybe some persistent storage or secret. Instead of deploying full-fledged YAMLs for every single one of them, and repeating myself, this chart requires very few lines to deploy this kind of app.  
 
+This chart is not published anywhere, it's used through Flux as a local chart reference:
+
+```yaml
+kind: HelmRelease
+...
+spec:
+  interval: 24h
+  chart:
+    spec:
+      chart: ./appchart
+      version: "x.x.x"
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+```
 **A lot of flags are specific to my deployment, and use specifics of my cluster (the ingressclass/storageclass names for example).**
 
 
 ## Very basic example
-
-Declare the HR somewhere
-
-```yaml
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
-metadata:
-  name: appchart
-  namespace: flux-system
-spec:
-  interval: 24h
-  url: https://k0rventen.github.io/appchart/
-```
-
-Then your HelmRelease:
 
 ```yaml
 apiVersion: helm.toolkit.fluxcd.io/v2
@@ -32,13 +33,12 @@ metadata:
 spec:
   chart:
     spec:
-      chart: appchart
+      chart: ./appchart
       version: "x.x.x"
       sourceRef:
-        kind: HelmRepository
-        name: appchart
+        kind: GitRepository
+        name: flux-system
         namespace: flux-system
-      interval: 10m
   targetNamespace: services
   values:
     apps:
@@ -70,6 +70,8 @@ helm template -f example-values.yaml . | k apply -f - --dry-run=server
 
 
 ## changelog
+
+1.10.0: added runtimeclass, priorityclass. new `persistentVolumes` as a replacement for `pvcs` (to be deleted in 1.11)
 
 1.8.0: default values are now in `values.yaml`, reworked the middleware mgmt, removed unused `secrets`.
 

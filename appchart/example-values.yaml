@@ -63,9 +63,32 @@ apps:
     # enable an anubis sidecar for scraper protection (will proxy the traffic through an anubis container)
     anubis: true
 
+    # configure the priorityclass (default to low priority if not set)
+    critical: true
+
+    # configure the runtimeclass based on the secureness of the workload.
+    # use runc by default, gvisor as a more secure (but higher overhead) option
+    secureRuntime: false
+
     # will create a pvc w/ this name
+    # DEPRECATED, switch to the new persistentVolumes
     pvc:
       - data
+
+    persistentVolumes:
+      - name: data
+        # override the default
+        # storageClass: other-sc
+
+        # pvc size
+        size: 5Gi
+
+        # make sure the access mode is compatible with the sc
+        # accessMode: ReadWriteOnce
+
+        # add a backup: true label for secchio to pick up
+        backup: false
+
 
     # in case of a private registry
     imagePullSecret: secret

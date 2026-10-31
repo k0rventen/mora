@@ -49,7 +49,7 @@ spec:
             persistentVolumeClaim:
               claimName: gitea-conf
       - name: runner
-        image: gitea/runner:5.2.2-dind@sha256:db1e9f8991780094d6ce85a78784449fe999620d58f82962e77a8644c64e6775
+        image: gitea/runner:5.2.4-dind@sha256:e12b6b4a626b7b580e9ecda3dc84779a72019b5ac4c8c563c7d3931631ce34be
         volumeMounts:
           - name: docker-daemon-config
             mountPath: /etc/docker/daemon.json
